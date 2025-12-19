@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ticketcon/login_and_register/auth/login_screen.dart';
-import 'package:ticketcon/login_and_register/auth/register_screen.dart';
-import 'package:ticketcon/widgets/custom_button.dart';
-import 'package:ticketcon/widgets/tixio_logo.dart';
-import 'package:ticketcon/widgets/zigzag_background.dart';
+import 'package:tixio/login_and_register/auth/login_screen.dart';
+import 'package:tixio/login_and_register/auth/register_screen.dart';
+import 'package:tixio/widgets/custom_button.dart';
+import 'package:tixio/widgets/tixio_logo.dart';
+import 'package:tixio/widgets/zigzag_background.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginOptionScreen extends StatelessWidget {

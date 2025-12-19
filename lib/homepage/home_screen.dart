@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:ticketcon/homepage/sections/category_section.dart';
-import 'package:ticketcon/homepage/sections/for_you_section.dart';
-import 'package:ticketcon/homepage/sections/month_filter.dart';
-import 'package:ticketcon/homepage/sections/special_events.dart';
-import 'package:ticketcon/homepage/sections/trending_events.dart';
-import 'package:ticketcon/taskbar_and_navbot/navigation_bottom.dart';
-import 'package:ticketcon/taskbar_and_navbot/taskbar.dart';
-import 'package:ticketcon/widgets/tixio_logo.dart';
-import 'package:ticketcon/search/search_screen.dart';
-import 'package:ticketcon/account/account_screen.dart';
+import 'package:tixio/homepage/sections/category_section.dart';
+import 'package:tixio/homepage/sections/for_you_section.dart';
+import 'package:tixio/homepage/sections/month_filter.dart';
+import 'package:tixio/homepage/sections/special_events.dart';
+import 'package:tixio/homepage/sections/trending_events.dart';
+import 'package:tixio/taskbar_and_navbot/navigation_bottom.dart';
+import 'package:tixio/taskbar_and_navbot/taskbar.dart';
+import 'package:tixio/widgets/tixio_logo.dart';
+import 'package:tixio/search/search_screen.dart';
+import 'package:tixio/account/account_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

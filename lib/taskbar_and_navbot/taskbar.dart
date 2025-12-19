@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticketcon/widgets/tixio_logo.dart';
+import 'package:tixio/widgets/tixio_logo.dart';
 
 class Taskbar extends StatelessWidget {
   const Taskbar({super.key});

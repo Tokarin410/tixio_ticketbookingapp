@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticketcon/account/screens/edit_profile_screen.dart';
-import 'package:ticketcon/account/screens/payment_management_screen.dart';
-import 'package:ticketcon/account/screens/reset_password_screen.dart';
-import 'package:ticketcon/account/widgets/logout_dialog.dart';
-import 'package:ticketcon/widgets/zigzag_clipper.dart';
+import 'package:tixio/account/screens/edit_profile_screen.dart';
+import 'package:tixio/account/screens/payment_management_screen.dart';
+import 'package:tixio/account/screens/reset_password_screen.dart';
+import 'package:tixio/account/widgets/logout_dialog.dart';
+import 'package:tixio/widgets/zigzag_clipper.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});

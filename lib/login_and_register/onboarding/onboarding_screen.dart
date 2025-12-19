@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ticketcon/login_and_register/auth/login_option_screen.dart';
-import 'package:ticketcon/widgets/tixio_logo.dart';
+import 'package:tixio/login_and_register/auth/login_option_screen.dart';
+import 'package:tixio/widgets/tixio_logo.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});

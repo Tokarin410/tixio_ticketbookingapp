@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticketcon/login_and_register/auth/forgot_password/find_account_screen.dart';
-import 'package:ticketcon/login_and_register/auth/register_screen.dart';
-import 'package:ticketcon/widgets/custom_button.dart';
-import 'package:ticketcon/widgets/custom_text_field.dart';
-import 'package:ticketcon/widgets/social_button.dart';
-import 'package:ticketcon/widgets/tixio_logo.dart';
-import 'package:ticketcon/widgets/custom_button.dart';
-import 'package:ticketcon/widgets/custom_text_field.dart';
+import 'package:tixio/login_and_register/auth/forgot_password/find_account_screen.dart';
+import 'package:tixio/login_and_register/auth/register_screen.dart';
+import 'package:tixio/widgets/custom_button.dart';
+import 'package:tixio/widgets/custom_text_field.dart';
+import 'package:tixio/widgets/social_button.dart';
+import 'package:tixio/widgets/tixio_logo.dart';
+import 'package:tixio/widgets/custom_button.dart';
+import 'package:tixio/widgets/custom_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

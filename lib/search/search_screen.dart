@@ -1,7 +1,7 @@
-666666import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticketcon/homepage/sections/for_you_section.dart';
-import 'package:ticketcon/search/widgets/filter_bottom_sheet.dart';
+import 'package:tixio/homepage/sections/for_you_section.dart';
+import 'package:tixio/search/widgets/filter_bottom_sheet.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

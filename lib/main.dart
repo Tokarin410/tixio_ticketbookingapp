@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ticketcon/login_and_register/onboarding/onboarding_screen.dart';
-import 'package:ticketcon/homepage/home_screen.dart';
-import 'package:ticketcon/taskbar_and_navbot/safety_instructions_screen.dart';
-import 'package:ticketcon/taskbar_and_navbot/regulations_screen.dart';
-import 'package:ticketcon/taskbar_and_navbot/report_incident_screen.dart';
-import 'package:ticketcon/taskbar_and_navbot/notifications_screen.dart';
+import 'package:tixio/login_and_register/onboarding/onboarding_screen.dart';
+import 'package:tixio/homepage/home_screen.dart';
+import 'package:tixio/taskbar_and_navbot/safety_instructions_screen.dart';
+import 'package:tixio/taskbar_and_navbot/regulations_screen.dart';
+import 'package:tixio/taskbar_and_navbot/report_incident_screen.dart';
+import 'package:tixio/taskbar_and_navbot/notifications_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ticketcon',
+      title: 'Tixio',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

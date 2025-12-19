@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ticketcon/login_and_register/auth/forgot_password/reset_success_screen.dart';
-import 'package:ticketcon/widgets/custom_button.dart';
-import 'package:ticketcon/widgets/custom_text_field.dart';
+import 'package:tixio/login_and_register/auth/forgot_password/reset_success_screen.dart';
+import 'package:tixio/widgets/custom_button.dart';
+import 'package:tixio/widgets/custom_text_field.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
