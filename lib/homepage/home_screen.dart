@@ -9,6 +9,7 @@ import 'package:tixio/taskbar_and_navbot/taskbar.dart';
 import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/search/search_screen.dart';
 import 'package:tixio/account/account_screen.dart';
+import 'package:tixio/vecuatoi/myticket.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Scaffold(
           backgroundColor: Colors.transparent, 
           drawer: const Taskbar(), // Add Side Menu (Taskbar)
-          appBar: _currentIndex == 2 
+          appBar: (_currentIndex == 2 || _currentIndex == 1)
               ? null 
               : AppBar(
             backgroundColor: Colors.transparent,
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: _currentIndex == 2 
+          body: (_currentIndex == 2 || _currentIndex == 1)
             ? _buildBody()
             : Container(
              margin: const EdgeInsets.only(top: 10), // Spacing from AppBar
@@ -135,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       case 1:
-        return const Center(child: Text("Vé của tôi Screen Placeholder"));
+        return const MyTicketScreen();
       case 2:
         return const AccountScreen();
       default:

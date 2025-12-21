@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tixio/buy_ticket/thongtinsukien.dart';
 
 class SpecialEvents extends StatelessWidget {
   const SpecialEvents({super.key});
@@ -22,14 +23,18 @@ class SpecialEvents extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             itemCount: 5,
             itemBuilder: (context, index) {
-              return Container(
-                width: 160,
-                margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.blueGrey[100],
-                ),
-                child: Column(
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+                },
+                child: Container(
+                  width: 160,
+                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.blueGrey[100],
+                  ),
+                  child: Column(
                   children: [
                     Expanded(
                       flex: 3,
@@ -51,7 +56,8 @@ class SpecialEvents extends StatelessWidget {
                     ),
                   ],
                 ),
-              );
+              ),
+            );
             },
           ),
         ),

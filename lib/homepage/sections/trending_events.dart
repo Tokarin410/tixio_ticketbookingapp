@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tixio/buy_ticket/thongtinsukien.dart';
 
 class TrendingEvents extends StatefulWidget {
   const TrendingEvents({super.key});
@@ -53,17 +54,22 @@ class _TrendingEventsState extends State<TrendingEvents> {
                 });
               },
               itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.grey[300], 
-                    image: const DecorationImage(
-                      image: AssetImage('assets/images/poster_test.png'), 
-                      fit: BoxFit.cover,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey[300], 
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/poster_test.png'), 
+                        fit: BoxFit.cover,
+                      ),
                     ),
+                    child: Center(child: Text("Event ${index + 1}", style: const TextStyle(color: Colors.white))),
                   ),
-                  child: Center(child: Text("Event ${index + 1}", style: const TextStyle(color: Colors.white))),
                 );
               },
             ),

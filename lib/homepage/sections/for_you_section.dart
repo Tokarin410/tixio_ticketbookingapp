@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tixio/buy_ticket/thongtinsukien.dart';
 
 class ForYouSection extends StatelessWidget {
   final bool showHeader;
@@ -69,9 +70,13 @@ class ForYouSection extends StatelessWidget {
           itemCount: events.length,
           itemBuilder: (context, index) {
             final event = events[index];
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 // Image
                 Expanded(
                   child: Container(
@@ -113,6 +118,7 @@ class ForYouSection extends StatelessWidget {
                   ],
                 ),
               ],
+             ),
             );
           },
         ),
