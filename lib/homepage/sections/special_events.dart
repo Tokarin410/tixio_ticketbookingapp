@@ -4,6 +4,14 @@ import 'package:tixio/buy_ticket/thongtinsukien.dart';
 class SpecialEvents extends StatelessWidget {
   const SpecialEvents({super.key});
 
+  final List<String> _posterImages = const [
+    'assets/images/Poster dọc/db2d885f8d62de0f2d07a0b8d8137bc4.jpg',
+    'assets/images/Poster dọc/images (1).jpg',
+    'assets/images/Poster dọc/images (2).jpg',
+    'assets/images/Poster dọc/images (3).jpg',
+    'assets/images/Poster dọc/images.jpg',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -21,7 +29,7 @@ class SpecialEvents extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: 5,
+            itemCount: _posterImages.length,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -32,32 +40,14 @@ class SpecialEvents extends StatelessWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 4.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.blueGrey[100],
+                    color: Colors.grey[300],
+                    image: DecorationImage(
+                      image: AssetImage(_posterImages[index]),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  child: Column(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                            color: Colors.grey
-                        ),
-                        // child: Image.asset(...), // Placeholder
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                          padding: const EdgeInsets.all(4),
-                          alignment: Alignment.center,
-                          child: const Text("Special Event Info", textAlign: TextAlign.center, style: TextStyle(fontSize: 12))
-                      ),
-                    ),
-                  ],
                 ),
-              ),
-            );
+              );
             },
           ),
         ),

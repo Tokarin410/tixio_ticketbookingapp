@@ -34,14 +34,12 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
       body: Column(
         children: [
           // Header SECTION
+          // Header SECTION
           Container(
-            padding: const EdgeInsets.only(top: 40, bottom: 20),
+            padding: const EdgeInsets.only(top: 50, bottom: 10), // Reduced bottom padding, adjusted top
             decoration: const BoxDecoration(
               color: Color(0xFF013aad),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
+              // borderRadius: BorderRadius.zero, // Removed rounded corners as requested
             ),
             child: Column(
               children: [
@@ -51,29 +49,29 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
                       Text(
                         "Vé của tôi",
                         style: GoogleFonts.josefinSans(
-                          fontSize: 24,
+                          fontSize: 20, // Reduced from 24
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 10), // Reduced from 15
                       Container(
                         width: MediaQuery.of(context).size.width * 0.7,
-                        height: 1, // Crisper thin line
-                        color: Colors.white, // Solid white
+                        height: 0.5, // Thinner line
+                        color: Colors.white, 
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 15), // Reduced from 25
                 // Custom Tab Bar
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 50,
+                  height: 40, // Reduced from 50
                   decoration: BoxDecoration(
-                    color: Colors.white24, // Use white24 for standard semi-transparent
+                    color: Colors.white24, 
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.white12), // Subtle border
+                    border: Border.all(color: Colors.white12), 
                   ),
                   child: TabBar(
                     controller: _tabController,
@@ -85,16 +83,16 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
                     unselectedLabelColor: Colors.white,
                     labelStyle: GoogleFonts.josefinSans(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14, // Reduced from 16
                     ),
                     tabs: const [
-                      Tab(text: "Sắp diễn ra"),
-                      Tab(text: "Đã kết thúc"),
+                       Tab(text: "Sắp diễn ra", height: 40), // explicit height? No, TabBar takes container height usually, but let's be safe
+                       Tab(text: "Đã kết thúc", height: 40),
                     ],
                     dividerColor: Colors.transparent,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    padding: const EdgeInsets.all(5),
-                    labelPadding: EdgeInsets.zero, // Important to center text in the pill
+                    padding: const EdgeInsets.all(4), // Reduced from 5
+                    labelPadding: EdgeInsets.zero, 
                   ),
                 ),
               ],

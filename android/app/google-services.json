@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "149609022354",
+    "project_id": "tixio-eb7e5",
+    "storage_bucket": "tixio-eb7e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149609022354:android:a7f8ad495ee7da2b89774b",
+        "android_client_info": {
+          "package_name": "com.example.ticketcon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7ES9CXhIEN7nSvIb_l5qJ7o4Ohq527UQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

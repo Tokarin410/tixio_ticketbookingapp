@@ -85,18 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
              margin: const EdgeInsets.only(top: 10), // Spacing from AppBar
              decoration: const BoxDecoration(
                color: Colors.white,
-               borderRadius: BorderRadius.only(
-                 topLeft: Radius.circular(30),
-                 topRight: Radius.circular(30),
-               ),
              ),
-             child: ClipRRect(
-               borderRadius: const BorderRadius.only(
-                 topLeft: Radius.circular(30),
-                 topRight: Radius.circular(30),
-               ),
-               child: _buildBody(),
-             ),
+             child: _buildBody(),
           ),
           bottomNavigationBar: NavigationBottom(
             currentIndex: _currentIndex,

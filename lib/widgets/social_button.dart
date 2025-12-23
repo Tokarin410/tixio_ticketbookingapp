@@ -38,7 +38,7 @@ class SocialButton extends StatelessWidget {
                   text,
                   style: GoogleFonts.poppins(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

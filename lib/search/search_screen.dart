@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tixio/homepage/sections/for_you_section.dart';
+import 'package:tixio/buy_ticket/thongtinsukien.dart'; // Add import
 import 'package:tixio/search/widgets/filter_bottom_sheet.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -163,6 +163,30 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSuggestions() {
+    // Mock Data for Suggestions (matching design)
+    final List<Map<String, String>> suggestionEvents = [
+      {
+        "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
+        "date": "27 Tháng 12, 2025",
+        "image": "assets/images/Poster ngang/ATSH.png"
+      },
+      {
+         "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
+         "date": "27 Tháng 12, 2025",
+         "image": "assets/images/Poster ngang/ATSH.png"
+      },
+      {
+         "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
+         "date": "27 Tháng 12, 2025",
+         "image": "assets/images/Poster ngang/ATSH.png"
+      },
+       {
+         "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
+         "date": "27 Tháng 12, 2025",
+         "image": "assets/images/Poster ngang/ATSH.png"
+      },
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -176,24 +200,78 @@ class _SearchScreenState extends State<SearchScreen> {
              ),
            ),
          ),
-         const SizedBox(height: 10),
-         // Reuse existing component for consistency
-         // We might need to adjust it slightly if it has its own padding/headers we don't want,
-         // but based on view_file, ForYouSection has its own header "Dành cho bạn".
-         // Let's assume we want to mock the content. 
-         // Actually, ForYouSection replicates the grid content. 
-         // Since ForYouSection includes the header "Dành cho bạn", 
-         // I will suppress my own header above to avoid duplication or just use ForYouSection directly.
-         // Wait, ForYouSection has a big "Dành cho bạn" header. 
-         // The design shows "Gợi ý dành cho bạn".
-         // I'll just use ForYouSection but wrap it effectively.
-         // Or even better, just copy the logic for cleaner UI control matching the specific Search design.
-         // The user wants the Search screen exactly as image.
+         const SizedBox(height: 16),
          
-         const Padding(
-           padding: EdgeInsets.symmetric(horizontal: 0), 
-           child: ForYouSection(showHeader: false), // Header hidden to avoid duplication
+         GridView.builder(
+           padding: const EdgeInsets.symmetric(horizontal: 16),
+           shrinkWrap: true,
+           physics: const NeverScrollableScrollPhysics(),
+           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+             crossAxisCount: 2,
+             crossAxisSpacing: 12,
+             mainAxisSpacing: 16,
+             childAspectRatio: 1.15, // Adjusted to match My Ticket style
+           ),
+           itemCount: suggestionEvents.length,
+           itemBuilder: (context, index) {
+             final event = suggestionEvents[index];
+             return GestureDetector(
+               onTap: () {
+                  // Navigate to Event Detail
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+               },
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: [
+                   // Image
+                   Expanded(
+                     child: Container(
+                       decoration: BoxDecoration(
+                         borderRadius: BorderRadius.circular(16), // Radius 16
+                         image: DecorationImage(
+                           image: AssetImage(event["image"]!),
+                           fit: BoxFit.cover,
+                         ),
+                       ),
+                     ),
+                   ),
+                   const SizedBox(height: 8),
+                   // Title
+                   SizedBox(
+                     height: 32, // Fixed height for 2 lines alignment
+                     child: Text(
+                       event["title"]!,
+                       style: GoogleFonts.josefinSans(
+                         color: const Color(0xFF013aad), // Blue title
+                         fontWeight: FontWeight.bold,
+                         fontSize: 12, // Reduced to 12
+                       ),
+                       maxLines: 2,
+                       overflow: TextOverflow.ellipsis,
+                     ),
+                   ),
+                   const SizedBox(height: 4),
+                   // Date
+                   Row(
+                     children: [
+                       const Icon(Icons.calendar_today, size: 12, color: Color(0xFFA51C30)), // Red icon
+                       const SizedBox(width: 4),
+                       Text(
+                         event["date"]!,
+                         style: GoogleFonts.josefinSans(
+                           color: const Color(0xFFA51C30), // Red date text
+                           fontSize: 10,
+                           fontWeight: FontWeight.bold,
+                         ),
+                       ),
+                     ],
+                   ),
+                 ],
+               ),
+             );
+           },
          ),
+         const SizedBox(height: 20),
       ],
     );
   }

@@ -9,6 +9,7 @@ import 'package:tixio/widgets/social_button.dart';
 import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/widgets/custom_button.dart';
 import 'package:tixio/widgets/custom_text_field.dart';
+import 'package:tixio/services/authentication.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _showPasswordError = false;
   bool _showEmailError = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -80,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
           "Đăng nhập",
           style: GoogleFonts.poppins(
             color: const Color(0xFF1E3A8A),
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.bold
           ),
         ),
@@ -171,30 +173,45 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                ),
               const SizedBox(height: 20),
-              CustomButton(
+              _isLoading 
+              ? const Center(child: CircularProgressIndicator())
+              : CustomButton(
                 text: 'Tiếp tục',
                 backgroundColor: const Color(0xFF1E3A8A), // Dark Blue
-                onPressed: () {
-                   Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+                onPressed: () async {
+                  setState(() => _isLoading = true);
+                  final auth = AuthService();
+                  final user = await auth.signInWithEmailAndPassword(
+                    _emailController.text.trim(), 
+                    _passwordController.text.trim()
+                  );
+                  
+                  if (!mounted) return;
+
+                  if (user != null) {
+                    // Success: Pop everything to go back to Wrapper (which shows Home)
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  } else {
+                    setState(() => _isLoading = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.")),
+                    );
+                  }
                 },
               ),
               const SizedBox(height: 20),
+              const SizedBox(height: 30),
                Center(
                   child: Text(
                     "Hoặc",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFFA51C30), // Red
-                      fontWeight: FontWeight.w500
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                ),
-              const SizedBox(height: 20),
-              SocialButton(
-                text: 'Đăng nhập với Facebook',
-                icon: FontAwesomeIcons.facebookF,
-                onPressed: () {},
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
               SocialButton(
                 text: 'Đăng nhập với Google',
                 icon: FontAwesomeIcons.googlePlusG,

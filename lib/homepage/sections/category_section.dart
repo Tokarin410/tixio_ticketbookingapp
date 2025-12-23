@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
+import 'package:tixio/search/search_screen.dart';
 
 class CategorySection extends StatelessWidget {
   final String title;
@@ -14,24 +15,24 @@ class CategorySection extends StatelessWidget {
             {
               "title": "[BẾN THÀNH] Đêm nhạc Hoàng Hải - Uyên Linh",
               "date": "27 Tháng 12, 2025",
-              "image": "assets/images/poster_test.png"
+              "image": "assets/images/Nhạc sống/nhacsong1.jpg"
             },
             {
               "title": "[HBSO] HÒA NHẠC GIÁNG SINH",
               "date": "25 Tháng 12, 2025",
-              "image": "assets/images/poster_test.png"
+              "image": "assets/images/Nhạc sống/nhacsong2.jpeg"
             },
           ]
         : [
             {
               "title": "CHUNG KẾT ĐTDV MÙA ĐÔNG 2025",
               "date": "27 Tháng 12, 2025",
-              "image": "assets/images/poster_test.png"
+              "image": "assets/images/Thể thao/sport1.jpg"
             },
             {
               "title": "VIETNAM BASKETBALL CHAMPIONSHIP 2025",
               "date": "25 Tháng 12, 2025",
-              "image": "assets/images/poster_test.png"
+              "image": "assets/images/Thể thao/sport2.jpg"
             },
           ];
 
@@ -48,7 +49,12 @@ class CategorySection extends StatelessWidget {
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87), // Bigger title
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const SearchScreen())
+                  );
+                },
                 child: const Row(
                   children: [
                     Text("Xem thêm", style: TextStyle(color: Colors.grey, fontSize: 14)),
@@ -68,7 +74,7 @@ class CategorySection extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 16,
-            childAspectRatio: 0.75,
+            childAspectRatio: 1.15, // Match My Ticket
           ),
           itemCount: events.length,
           itemBuilder: (context, index) {
@@ -84,7 +90,7 @@ class CategorySection extends StatelessWidget {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16), // More rounded
+                      borderRadius: BorderRadius.circular(16), // Already 16
                       image: DecorationImage(
                         image: AssetImage(event["image"]!),
                         fit: BoxFit.cover,
@@ -94,15 +100,18 @@ class CategorySection extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 // Title
-                Text(
-                  event["title"]!,
-                  style: const TextStyle(
-                    color: Color(0xFF013aad), // Blue title per user request
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                SizedBox(
+                  height: 32,
+                  child: Text(
+                    event["title"]!,
+                    style: const TextStyle(
+                      color: Color(0xFF013aad), // Blue title per user request
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12, // Reduced to 12
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 // Date

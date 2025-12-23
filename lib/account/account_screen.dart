@@ -78,7 +78,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 3),
                           image: const DecorationImage(
-                             image: AssetImage("assets/images/logotixio.png"), // Fallback
+                             image: AssetImage("assets/images/ava_user.png"),
                             fit: BoxFit.cover,
                           ),
                         ),

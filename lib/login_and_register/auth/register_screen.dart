@@ -7,6 +7,7 @@ import 'package:tixio/widgets/custom_text_field.dart';
 import 'package:tixio/widgets/social_button.dart'; // Added
 import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/widgets/zigzag_background.dart';
+import 'package:tixio/services/authentication.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _showPassLengthError = false;
   bool _showConfirmPassLengthError = false;
   bool _showEmailError = false; // Added
+  bool _isLoading = false;
 
   bool get _isValid => _isLengthValid && _isUppercaseValid && _isSpecialValid && _isMatchValid && !_showEmailError && _emailController.text.isNotEmpty; 
   // Should we include email validity in the "Box" validity? 
@@ -116,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "Đăng kí",
           style: GoogleFonts.poppins(
             color: const Color(0xFF1E3A8A),
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.bold
           ),
         ),
@@ -241,35 +243,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
                ),
                
                const SizedBox(height: 30),
-               CustomButton(
-                text: 'Tiếp tục',
-                backgroundColor: const Color(0xFF1E3A8A), // Dark Blue
-                onPressed: () {
-                  if (_isValid && !_showEmailError && _emailController.text.isNotEmpty) {
-                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterSuccessScreen()),
-                    );
-                  }
-                },
-              ),
+                _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : CustomButton(
+                 text: 'Tiếp tục',
+                 backgroundColor: const Color(0xFF1E3A8A), // Dark Blue
+                 onPressed: () async {
+                   if (_isValid && !_showEmailError && _emailController.text.isNotEmpty) {
+                      setState(() => _isLoading = true);
+                      final auth = AuthService();
+                      final user = await auth.registerWithEmailAndPassword(
+                        _emailController.text.trim(), 
+                        _passController.text.trim()
+                      );
+                      
+                      if (!mounted) return;
+
+                      if (user != null) {
+                         // Must Sign Out immediately to prevent auto-login by Wrapper
+                         await auth.signOut();
+
+                         Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterSuccessScreen()),
+                        );
+                      } else {
+                        setState(() => _isLoading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Đăng ký thất bại. Email có thể đã tồn tại.")),
+                        );
+                      }
+                   }
+                 },
+               ),
                const SizedBox(height: 20),
+               const SizedBox(height: 30),
                 Center(
                   child: Text(
                     "Hoặc",
                     style: GoogleFonts.poppins(
                       color: const Color(0xFFA51C30), // Red
-                      fontWeight: FontWeight.w500
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                ),
-              const SizedBox(height: 20),
-              SocialButton(
-                text: 'Đăng nhập với Facebook',
-                icon: FontAwesomeIcons.facebookF,
-                onPressed: () {},
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
               SocialButton(
                 text: 'Đăng nhập với Google',
                 icon: FontAwesomeIcons.googlePlusG,
@@ -332,19 +351,19 @@ class RegisterSuccessScreen extends StatelessWidget {
             const SizedBox(height: 30),
              Text(
               "CHÚC MỪNG BẠN",
-              style: GoogleFonts.poppins(color: const Color(0xFF1E3A8A), fontSize: 24, fontWeight: FontWeight.bold),
+              style: GoogleFonts.poppins(color: const Color(0xFF1E3A8A), fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             Text(
               "ĐÃ ĐĂNG KÝ THÀNH CÔNG",
-               style: GoogleFonts.poppins(color: const Color(0xFF1E3A8A), fontSize: 16, fontWeight: FontWeight.bold),
+               style: GoogleFonts.poppins(color: const Color(0xFF1E3A8A), fontSize: 14, fontWeight: FontWeight.bold),
                textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
             
              Text(
               "Hãy tiến hành đăng nhập lại\nvào hệ thống bạn nhé !",
-              style: GoogleFonts.poppins(color: const Color(0xFFA51C30), fontSize: 14, fontWeight: FontWeight.w500),
+              style: GoogleFonts.poppins(color: const Color(0xFFA51C30), fontSize: 13, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),

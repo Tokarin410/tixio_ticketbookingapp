@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tixio/buy_ticket/choose_ticket_screen.dart';
 
 class ThongTinSuKienScreen extends StatefulWidget {
   const ThongTinSuKienScreen({super.key});
@@ -219,15 +220,39 @@ class _ThongTinSuKienScreenState extends State<ThongTinSuKienScreen> {
                   
                   _buildTicketTier(context, "Hạng A", "10.000.000đ", true, [
                      "KHU VỰC DÀNH CHO NGƯỜI THAM DỰ TỪ ĐỦ 18 TUỔI\nPREMIUM SERVICES*",
-                     "01 Vé vào cổng khu vực SKY LOUNGE (NGỒI)",
-                     "Cơ hội tham dự SOUNDCHECK (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
-                     "Cơ hội tham dự GROUP PHOTO (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
-                     "Quà tặng: 01 Quà tặng phiên bản đặc biệt - Áo thun \"Say Hi\"",
+                     "- 01 Vé vào cổng khu vực SKY LOUNGE (NGỒI)",
+                     "- Cơ hội tham dự SOUNDCHECK (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "- Cơ hội tham dự GROUP PHOTO (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "- Quà tặng: 01 Quà tặng phiên bản đặc biệt - Áo thun \"Say Hi\"",
                   ]),
                   const SizedBox(height: 10),
-                  _buildTicketTier(context, "Hạng B", "8.000.000đ", false, []),
+                  _buildTicketTier(context, "Hạng B", "8.000.000đ", false, [
+                     "KHU VỰC DÀNH CHO NGƯỜI THAM DỰ TỪ ĐỦ 18 TUỔI\nPREMIUM SERVICES*",
+                     "- 01 Vé vào cổng khu vực SKY LOUNGE (NGỒI)",
+                     "- Cơ hội tham dự SOUNDCHECK (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "- Cơ hội tham dự GROUP PHOTO (Theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "Quà tặng nhận tại sự kiện:",
+                     "- 01 Quà tặng phiên bản đặc biệt - Áo thun \"Say Hi\"",
+                     "- 01 Vòng tay",
+                     "- 01 Anh Trai \"Say Hi\" Photocard ngẫu nhiên",
+                     "- 01 Dây đeo thẻ Anh Trai \"Say Hi\" Concert",
+                     "- 01 Thẻ đeo Anh Trai \"Say Hi\" Concert",
+                     "- 01 PopSocket Anh Trai \"Say Hi\" Concert",
+                  ]),
                   const SizedBox(height: 10),
-                  _buildTicketTier(context, "Hạng C", "2.000.000đ", false, []),
+                  _buildTicketTier(context, "Hạng C", "2.000.000đ", false, [
+                     "KHU VỰC DÀNH CHO NGƯỜI THAM DỰ TỪ ĐỦ 18 TUỔI\nPREMIUM SERVICES*",
+                     "- 01 Vé vào cổng khu vực SKY LOUNGE (NGỒI)",
+                     "- Cơ hội tham dự SOUNDCHECK (theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "- Cơ hội tham dự GROUP PHOTO (Theo sự sắp xếp của BTC) Ngẫu nhiên 50 khách hàng",
+                     "Quà tặng nhận tại sự kiện:",
+                     "- 01 Quà tặng phiên bản đặc biệt - Áo thun \"Say Hi\"",
+                     "- 01 Vòng tay",
+                     "- 01 Anh Trai \"Say Hi\" Photocard ngẫu nhiên",
+                     "- 01 Dây đeo thẻ Anh Trai \"Say Hi\" Concert",
+                     "- 01 Thẻ đeo Anh Trai \"Say Hi\" Concert",
+                     "- 01 PopSocket Anh Trai \"Say Hi\" Concert",
+                  ]),
                   
                   const SizedBox(height: 100), // Space for bottom button
                 ],
@@ -242,19 +267,23 @@ class _ThongTinSuKienScreenState extends State<ThongTinSuKienScreen> {
           color: Colors.white,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: const Offset(0,-5))],
         ),
-        child: ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF013aad),
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          child: Text(
-            "Đặt vé ngay",
-            style: GoogleFonts.josefinSans(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+        child: SafeArea(
+          child: ElevatedButton(
+            onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (context) => const ChooseTicketScreen()));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF013aad),
+              minimumSize: const Size(double.infinity, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(
+              "Đặt vé ngay",
+              style: GoogleFonts.josefinSans(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -311,7 +340,7 @@ class _ThongTinSuKienScreenState extends State<ThongTinSuKienScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: details.map((e) => Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: Text("- $e", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  child: Text(e, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 )).toList(),
               ),
             ),

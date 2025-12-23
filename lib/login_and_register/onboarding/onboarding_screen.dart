@@ -16,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Simulate splash delay
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const LoginOptionScreen()),
         );
       }

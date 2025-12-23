@@ -162,54 +162,56 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
           
           // Bottom Buttons
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedCategory = "";
-                        _selectedTime = "";
-                        _selectedDate = null;
-                      });
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF013aad), width: 1.5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(
-                      "Thiết lập lại",
-                      style: GoogleFonts.josefinSans(
-                        color: const Color(0xFF013aad),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16.0, bottom: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedCategory = "";
+                          _selectedTime = "";
+                          _selectedDate = null;
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Color(0xFF013aad), width: 1.5),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text(
+                        "Thiết lập lại",
+                        style: GoogleFonts.josefinSans(
+                          color: const Color(0xFF013aad),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF013aad),
-                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(
-                      "Áp dụng",
-                      style: GoogleFonts.josefinSans(
-                         color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF013aad),
+                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: Text(
+                        "Áp dụng",
+                        style: GoogleFonts.josefinSans(
+                           color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

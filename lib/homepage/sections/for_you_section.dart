@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
+import 'package:tixio/search/search_screen.dart';
 
 class ForYouSection extends StatelessWidget {
   final bool showHeader;
@@ -12,22 +13,22 @@ class ForYouSection extends StatelessWidget {
       {
         "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
         "date": "27 Tháng 12, 2025",
-        "image": "assets/images/poster_test.png"
+        "image": "assets/images/Poster ngang/ATSH.png"
       },
       {
          "title": "Y-CONCERT - MÌNH ĐOÀN VIÊN THÔI",
          "date": "25 Tháng 12, 2025",
-         "image": "assets/images/poster_test.png"
+         "image": "assets/images/Poster ngang/Ycon.jpg"
       },
       {
          "title": "CHỊ ĐẸP ĐẠP GIÓ CONCERT 2025",
          "date": "30 Tháng 12, 2025",
-         "image": "assets/images/poster_test.png"
+         "image": "assets/images/Poster ngang/CDDG.jpg"
       },
       {
          "title": "ANH TRAI VƯỢT NGÀN CHÔNG GAI ENCORE",
          "date": "31 Tháng 12, 2025",
-         "image": "assets/images/poster_test.png"
+         "image": "assets/images/Poster ngang/ATVNCG.jpg"
       },
     ];
 
@@ -45,7 +46,12 @@ class ForYouSection extends StatelessWidget {
                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87), // Increased font size
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const SearchScreen())
+                  );
+                },
                 child: const Row(
                   children: [
                     Text("Xem thêm", style: TextStyle(color: Colors.grey, fontSize: 14)),
@@ -65,7 +71,7 @@ class ForYouSection extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 12,
             mainAxisSpacing: 16,
-            childAspectRatio: 0.75, // Adjust for card height
+            childAspectRatio: 1.15, // Match My Ticket
           ),
           itemCount: events.length,
           itemBuilder: (context, index) {
@@ -81,7 +87,7 @@ class ForYouSection extends StatelessWidget {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16), // Radius 16
                       image: DecorationImage(
                         image: AssetImage(event["image"]!),
                         fit: BoxFit.cover,
@@ -91,15 +97,18 @@ class ForYouSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 // Title
-                Text(
-                  event["title"]!,
-                  style: const TextStyle(
-                    color: Color(0xFF013aad), // Blue title
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                SizedBox(
+                  height: 32,
+                  child: Text(
+                    event["title"]!,
+                    style: const TextStyle(
+                      color: Color(0xFF013aad), // Blue title
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12, // Reduced to 12
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 // Date
@@ -127,17 +136,16 @@ class ForYouSection extends StatelessWidget {
         // Ad Banner
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          height: 120, // Increased height for banner
+          height: 150, // Increased height for better visibility
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.purple[100],
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
              image: const DecorationImage(
                 image: AssetImage('assets/images/bannerquangcao.png'), 
-                fit: BoxFit.cover,
+                fit: BoxFit.fill, // Ensure it fills the container completely
              ),
           ),
-          child: const Center(child: Text("Ad Banner Placeholder", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
         ),
       ],
     );

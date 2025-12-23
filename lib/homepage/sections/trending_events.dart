@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TrendingEvents extends StatefulWidget {
   const TrendingEvents({super.key});
@@ -11,6 +12,14 @@ class TrendingEvents extends StatefulWidget {
 class _TrendingEventsState extends State<TrendingEvents> {
   int _currentIndex = 0;
   final PageController _pageController = PageController(viewportFraction: 0.9);
+  
+  final List<String> _posterImages = [
+    'assets/images/Poster ngang/ATSH.png',
+    'assets/images/Poster ngang/ATVNCG.jpg',
+    'assets/images/Poster ngang/CDDG.jpg',
+    'assets/images/Poster ngang/EMXINH.jpg',
+    'assets/images/Poster ngang/Ycon.jpg',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +55,7 @@ class _TrendingEventsState extends State<TrendingEvents> {
           SizedBox(
             height: 200, 
             child: PageView.builder(
-              itemCount: 5, // Increased to 5 slides
+              itemCount: _posterImages.length,
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
@@ -63,12 +72,38 @@ class _TrendingEventsState extends State<TrendingEvents> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.grey[300], 
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/poster_test.png'), 
+                      image: DecorationImage(
+                        image: AssetImage(_posterImages[index]), 
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: Center(child: Text("Event ${index + 1}", style: const TextStyle(color: Colors.white))),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 10,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: Colors.white, width: 1.5),
+                              ),
+                              child: Text(
+                                "Xem chi tiết",
+                                style: GoogleFonts.josefinSans(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

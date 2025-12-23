@@ -211,7 +211,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       border: Border.all(color: Colors.white, width: 2), // Keep white border or remove? Image has it? Hard to see, keep for safety or remove if plain.
                       // Actually image has shadow? Or just cutout. Let's keep it simple.
                       image: const DecorationImage(
-                        image: AssetImage("assets/images/logotixio.png"), // Fallback
+                        image: AssetImage("assets/images/ava_user.png"),
                         fit: BoxFit.cover,
                       ),
                     ),
