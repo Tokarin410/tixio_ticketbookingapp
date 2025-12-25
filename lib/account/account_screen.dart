@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added
+import 'package:cloud_firestore/cloud_firestore.dart'; // Added
+import 'package:tixio/services/firestore_service.dart'; // Added
+import 'package:tixio/admin/admin_dashboard.dart'; // Added
 import 'package:tixio/account/screens/edit_profile_screen.dart';
 import 'package:tixio/account/screens/payment_management_screen.dart';
 import 'package:tixio/account/screens/reset_password_screen.dart';
@@ -54,10 +58,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 ClipPath(
                   clipper: ZigZagClipper(),
                   child: Container(
-                    height: 220, // Increased height for account header
+                    height: 220, 
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF013aad), // Fallback color if image is missing/loading
+                      color: Color(0xFF013aad), 
                       image: DecorationImage(
                         image: AssetImage("assets/images/background.jpg"),
                         fit: BoxFit.cover,
@@ -84,13 +88,33 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        "Phan Khánh Nam",
-                        style: GoogleFonts.josefinSans(
-                          fontSize: 24, 
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                      // Use FutureBuilder or StreamBuilder for real name
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: (FirebaseAuth.instance.currentUser != null) 
+                            ? FirestoreService().getUserProfileStream(FirebaseAuth.instance.currentUser!.uid)
+                            : null,
+                        builder: (context, snapshot) {
+                          String displayName = "Người dùng";
+                          if (FirebaseAuth.instance.currentUser?.displayName != null && FirebaseAuth.instance.currentUser!.displayName!.isNotEmpty) {
+                              displayName = FirebaseAuth.instance.currentUser!.displayName!;
+                          }
+                          
+                          if (snapshot.hasData && snapshot.data != null && snapshot.data!.exists) {
+                             final data = snapshot.data!.data() as Map<String, dynamic>;
+                             if (data['fullName'] != null && data['fullName'].isNotEmpty) {
+                               displayName = data['fullName'];
+                             }
+                          }
+                          
+                          return Text(
+                            displayName,
+                            style: GoogleFonts.josefinSans(
+                              fontSize: 24, 
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          );
+                        }
                       ),
                     ],
                   ),
@@ -139,6 +163,15 @@ class _AccountScreenState extends State<AccountScreen> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentManagementScreen()));
                } 
                // No trailing, defaults to arrow
+             ),
+             
+             // Admin Panel (Temporary)
+             _buildMenuItem(
+               "Quản trị viên (Thêm sự kiện)",
+               onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard()));
+               },
+               trailing: const Icon(Icons.admin_panel_settings, color: Colors.red),
              ),
              
              const SizedBox(height: 20),

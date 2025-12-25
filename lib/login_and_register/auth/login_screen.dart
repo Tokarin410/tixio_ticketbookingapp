@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tixio/login_and_register/auth/forgot_password/find_account_screen.dart';
+import 'package:tixio/account/screens/reset_password_screen.dart'; // Changed path
 import 'package:tixio/login_and_register/auth/register_screen.dart';
 import 'package:tixio/widgets/custom_button.dart';
 import 'package:tixio/widgets/custom_text_field.dart';
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                      Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const FindAccountScreen()),
+                      MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
                     );
                   },
                   child: Text(

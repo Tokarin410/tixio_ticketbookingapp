@@ -2,296 +2,360 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/buy_ticket/payment_info_screen.dart';
 import 'package:tixio/buy_ticket/widgets/ticket_stepper.dart';
+import 'package:tixio/models/event_model.dart';
+import 'package:intl/intl.dart';
+import 'package:tixio/services/firestore_service.dart';
 
 class ChooseTicketScreen extends StatefulWidget {
-  const ChooseTicketScreen({super.key});
+  final Event event;
+  const ChooseTicketScreen({super.key, required this.event});
 
   @override
   State<ChooseTicketScreen> createState() => _ChooseTicketScreenState();
 }
 
 class _ChooseTicketScreenState extends State<ChooseTicketScreen> {
-  // Ticket Counts
-  int countA = 0;
-  int countB = 0;
-  int countC = 0;
+  // Map to store counts for each tier index
+  final Map<int, int> ticketCounts = {};
+  late Stream<Event> _eventStream;
 
-  // Prices
-  final int priceA = 10000000;
-  final int priceB = 8000000;
-  final int priceC = 2000000;
+  @override
+  void initState() {
+    super.initState();
+    _eventStream = FirestoreService().getEventStream(widget.event.id, widget.event.category);
+    // Initialize counts to 0
+    for (int i = 0; i < widget.event.ticketTiers.length; i++) {
+        ticketCounts[i] = 0;
+    }
+  }
 
-  int get totalAmount => (countA * priceA) + (countB * priceB) + (countC * priceC);
+  int getTotalAmount(Event event) {
+    int total = 0;
+    for (int i = 0; i < event.ticketTiers.length; i++) {
+        // Price is now double in model, cast to int for total calculation
+        int price = event.ticketTiers[i].price.toInt();
+        total += (ticketCounts[i] ?? 0) * price; 
+    }
+    return total;
+  }
 
   // Helper to format currency
   String formatCurrency(int amount) {
-    // Simple formatter, can use NumberFormat later
-    String str = amount.toString();
-    // Add dots logic manually for simplicity or use logic
-    // Just simple manual replace for specific known lengths or raw string for now
-    // Actually let's use a quick regex or manual loop
-    // 10000000 -> 10.000.000
-    if (amount == 0) return "0đ";
-    final buffer = StringBuffer();
-    for (int i = 0; i < str.length; i++) {
-       if (i > 0 && (str.length - i) % 3 == 0) {
-         buffer.write('.');
-       }
-       buffer.write(str[i]);
-    }
-    return "${buffer.toString()}đ";
+    final currencyFormatter = NumberFormat("#,##0", "vi_VN");
+    return "${currencyFormatter.format(amount)}đ";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF5F5F5), // Keeping light grey bg for contrast
       appBar: AppBar(
         title: Text(
           "Chọn vé",
-          style: GoogleFonts.josefinSans(fontWeight: FontWeight.bold, color: Colors.white),
+          style: GoogleFonts.josefinSans(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
         ),
         centerTitle: true,
         backgroundColor: const Color(0xFF013aad),
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: [
-
-// ... class definition ...
-
-          // 1. Progress Bar
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: const TicketStepper(currentStep: 1),
-          ),
-          const SizedBox(height: 10),
+      body: StreamBuilder<Event>(
+        stream: _eventStream,
+        initialData: widget.event,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+             return Center(child: Text("Lỗi: ${snapshot.error}"));
+          }
           
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 2. Info Card
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
-                      boxShadow: [
-                         BoxShadow(color: Colors.grey.shade200, blurRadius: 5, offset: const Offset(0, 2))
-                      ]
-                    ),
-                    child: Row(
-                      children: [
-                        // Date Box
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE3F2FD),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Tháng 12", style: GoogleFonts.josefinSans(fontSize: 10, color: Colors.grey)),
-                              Text("27", style: GoogleFonts.josefinSans(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Text Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "ANH TRAI \"SAY HI\" 2025 CONCERT",
-                                style: GoogleFonts.josefinSans(fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                                  const SizedBox(width: 4),
-                                  Text("Khu đô thị Vạn Phúc, TPHCM", style: GoogleFonts.josefinSans(fontSize: 14, color: Colors.grey)),
-                                ],
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  // 3. Seat Map (Using Poster as placeholder if no specific map asset, but name 'sodoghe' from context if available)
-                  // Assuming "assets/images/poster_test.png" for now as placeholder
-                  // 3. Seat Map
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      "assets/images/mapatsh.png",
-                      width: double.infinity,
-                      // height: 200, // Let's keep 200 or allow auto? Placeholder was 200. User wants real map. 200 might be small for a map.
-                      // Let's use 200 and fit.contain or cover? Cover might crop important info. Map usually needs contain or just fit width. 
-                      // If I use fitWidth, height adjusts. 
-                      // Let's use fitWidth and no fixed height? Or fixed height 250?
-                      // The placeholder had 200.
-                      // Let's try fit: BoxFit.contain inside a Container with color? Or just Image.
-                      // If I use Image.asset with width double.infinity and fit BoxFit.fitWidth, it will take needed height.
-                      fit: BoxFit.fitWidth, 
-                    ),
-                  ),
+          // Use the latest event data
+          final event = snapshot.data ?? widget.event;
+          final total = getTotalAmount(event);
 
-                  const SizedBox(height: 20),
-
-                  // 4. Ticket List
-                  _buildTicketRow(
-                    "Hạng A", 
-                    priceA, 
-                    countA, 
-                    Colors.green,
-                    (val) => setState(() => countA = val)
-                  ),
-                   _buildTicketRow(
-                    "Hạng B", 
-                    priceB, 
-                    countB, 
-                    Colors.yellow,
-                    (val) => setState(() => countB = val)
-                  ),
-                   _buildTicketRow(
-                    "Hạng C", 
-                    priceC, 
-                    countC, 
-                    Colors.blue,
-                    (val) => setState(() => countC = val)
-                  ),
-
-                  const SizedBox(height: 100), // Bottom spacer
-                ],
+          return Column(
+            children: [
+              // 1. Progress Bar
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: const TicketStepper(currentStep: 1),
               ),
-            ),
-          ),
-          
-          // 5. Bottom Bar
-          Container(
-             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-             decoration: BoxDecoration(
-               color: Colors.white,
-               boxShadow: [
-                 BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))
-               ]
-             ),
-             child: SafeArea( // Wrap in SafeArea
-               child: Column(
-                 mainAxisSize: MainAxisSize.min,
-                 children: [
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 2. Info Card
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                             BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+                          ]
+                        ),
+                        child: Row(
+                          children: [
+                            // Date Box
+                            Container(
+                              width: 65,
+                              height: 65,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE3F2FD), // Light Blue
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFFBBDEFB)),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Tháng ${event.dateOnly.split('/')[1]}", style: GoogleFonts.josefinSans(fontSize: 12, color: const Color(0xFF013aad), fontWeight: FontWeight.bold)),
+                                  Text(event.dateOnly.split('/')[0], style: GoogleFonts.josefinSans(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF013aad))),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            // Text Info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    event.title,
+                                    style: GoogleFonts.josefinSans(fontWeight: FontWeight.w800, fontSize: 16, height: 1.2),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Expanded(child: Text(event.location, style: GoogleFonts.josefinSans(fontSize: 14, color: Colors.grey[700]), overflow: TextOverflow.ellipsis)),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+
+                      // 3. Seat Map
+                      Text("Sơ đồ chỗ ngồi", style: GoogleFonts.josefinSans(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF013aad))),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade300),
+                          color: Colors.white,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: (event.seatMapImage != null && event.seatMapImage!.isNotEmpty)
+                            ? Image.asset(
+                                event.seatMapImage!, 
+                                width: double.infinity,
+                                fit: BoxFit.fitWidth, 
+                                errorBuilder: (context, error, stackTrace) => _buildNoMapPlaceholder(),
+                              )
+                            : _buildNoMapPlaceholder(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // 4. Ticket List - Dynamic
+                       Text("Chọn loại vé", style: GoogleFonts.josefinSans(fontSize: 18, fontWeight: FontWeight.bold, color: const Color(0xFF013aad))),
+                       const SizedBox(height: 12),
+                      ...List.generate(event.ticketTiers.length, (index) {
+                          final tier = event.ticketTiers[index];
+                          // Use consistent palette matching Event Details screen
+                          List<Color> tierColors = [
+                            const Color(0xFF00C853), // Green
+                            const Color(0xFFFFD600), // Yellow
+                            const Color(0xFFFF6D00), // Orange
+                            const Color(0xFF2962FF), // Blue
+                            const Color(0xFFD50000), // Red
+                            const Color(0xFFAA00FF), // Purple
+                          ];
+                          Color tierColor = tierColors[index % tierColors.length];
+                          
+                          return _buildTicketRow(
+                            tier.name,
+                            tier.price.toInt(),
+                            ticketCounts[index] ?? 0,
+                            tierColor,
+                            tier.available, // Use available quantity
+                            (val) => setState(() => ticketCounts[index] = val)
+                          );
+                      }),
+
+                      const SizedBox(height: 100), // Bottom spacer
+                    ],
+                  ),
+                ),
+              ),
+              
+              // 5. Bottom Bar
+              Container(
+                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                 decoration: BoxDecoration(
+                   color: Colors.white,
+                   boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0,-5))],
+                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+                 ),
+                 child: SafeArea(
+                   child: Column(
+                     mainAxisSize: MainAxisSize.min,
                      children: [
-                       Text("Tạm tính", style: GoogleFonts.josefinSans(fontSize: 20, fontWeight: FontWeight.bold)),
-                       Text(formatCurrency(totalAmount), style: GoogleFonts.josefinSans(fontSize: 20, fontWeight: FontWeight.bold, color: const Color(0xFFb11d39))),
+                       // Total Row
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                         children: [
+                           Text("Tổng tiền", style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54)),
+                           Text(formatCurrency(total), style: GoogleFonts.josefinSans(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFFb11d39))),
+                         ],
+                       ),
+                       const SizedBox(height: 16),
+                       ElevatedButton(
+                         onPressed: total > 0 ? () {
+                            // Gather selected tickets
+                            List<String> selectedTickets = [];
+                            for(int i=0; i<event.ticketTiers.length; i++) {
+                               int count = ticketCounts[i] ?? 0;
+                               if(count > 0) {
+                                   selectedTickets.add("${event.ticketTiers[i].name} x$count");
+                               }
+                            }
+                            
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInfoScreen(
+                              amount: formatCurrency(total),
+                              ticketInfo: selectedTickets.join(", "),
+                              event: event, // Pass event
+                            )));
+                         } : null,
+                         style: ElevatedButton.styleFrom(
+                           backgroundColor: const Color(0xFF013aad),
+                           minimumSize: const Size(double.infinity, 54),
+                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                           disabledBackgroundColor: Colors.grey[300],
+                           elevation: 0,
+                         ),
+                         child: Text("Tiếp tục", style: GoogleFonts.josefinSans(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                       )
                      ],
                    ),
-                   const SizedBox(height: 16),
-                   SizedBox(
-                     width: double.infinity,
-                     height: 50,
-                     child: ElevatedButton(
-                       onPressed: totalAmount > 0 
-                        ? () {
-                          List<String> parts = [];
-                          if (countA > 0) parts.add("Hạng A x$countA");
-                          if (countB > 0) parts.add("Hạng B x$countB");
-                          if (countC > 0) parts.add("Hạng C x$countC");
-                          String summary = parts.isEmpty ? "Hạng C x1" : parts.join(", ");
-
-                          Navigator.push(
-                            context, 
-                            MaterialPageRoute(
-                              builder: (context) => PaymentInfoScreen(
-                                totalAmount: totalAmount,
-                                ticketSummary: summary,
-                              )
-                            )
-                          );
-                        } 
-                        : null, // Disable if 0
-                       style: ElevatedButton.styleFrom(
-                         backgroundColor: const Color(0xFF013aad),
-                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                       ),
-                       child: Text("Tiếp tục", style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                     ),
-                   )
-                 ],
-               ),
-             ),
-          )
-        ],
+                 ),
+              ),
+            ],
+          );
+        }
       ),
     );
   }
 
-  // --- Widgets ---
-  
-  Widget _buildTicketRow(String name, int price, int count, Color color, Function(int) onChanged) {
+  Widget _buildNoMapPlaceholder() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(vertical: 0),
-      child: Column(
-        children: [
-           Row(
-             children: [
-               Container(width: 4, height: 40, color: color, margin: const EdgeInsets.only(right: 12)),
-                Expanded(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   children: [
-                     Text(name, style: GoogleFonts.josefinSans(fontSize: 17, fontWeight: FontWeight.w600)),
-                     Text(formatCurrency(price), style: GoogleFonts.josefinSans(fontSize: 16, color: const Color(0xFF013aad), fontWeight: FontWeight.w600)),
-                   ],
-                 ),
-               ),
-               // Counters
-               IconButton(
-                 onPressed: count > 0 ? () => onChanged(count - 1) : null,
-                 icon: Icon(Icons.remove, size: 20, color: count > 0 ? const Color(0xFF013aad) : Colors.grey.shade300),
-                 style: IconButton.styleFrom(
-                   shape: RoundedRectangleBorder(
-                     side: BorderSide(color: count > 0 ? const Color(0xFF013aad) : Colors.grey.shade300), 
-                     borderRadius: BorderRadius.circular(4)
-                   )
-                 ),
-               ),
-               Container(
-                 width: 40,
-                 height: 40,
-                 alignment: Alignment.center,
-                 color: Colors.grey.shade200,
-                 child: Text(count.toString(), style: GoogleFonts.josefinSans(fontSize: 18, fontWeight: FontWeight.bold)),
-               ),
-                IconButton(
-                 onPressed: () => onChanged(count + 1),
-                 icon: const Icon(Icons.add, size: 20, color: Color(0xFF013aad)),
-                  style: IconButton.styleFrom(
-                   shape: RoundedRectangleBorder(side: BorderSide(color: const Color(0xFF013aad)), borderRadius: BorderRadius.circular(4))
-                 ),
-               ),
-             ],
-           ),
-           const Divider(),
-        ],
-      )
+      height: 200, 
+      color: Colors.grey[100], 
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.map_outlined, size: 40, color: Colors.grey[400]),
+            const SizedBox(height: 8),
+            Text("Chưa cập nhật sơ đồ", style: GoogleFonts.josefinSans(color: Colors.grey[600])),
+          ],
+        ),
+      ),
     );
+  }
+
+  Widget _buildTicketRow(String title, int price, int count, Color color, int available, Function(int) onChanged) {
+      final currencyFormatter = NumberFormat("#,##0", "vi_VN");
+      String priceStr = (price == 0) ? "Miễn Phí" : "${currencyFormatter.format(price)}đ";
+      bool isSoldOut = available <= 0;
+      
+      return Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          // border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 4))]
+        ),
+        child: Row(
+          children: [
+            // Color strip
+            Container(
+              width: 5,
+              height: 50,
+              decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+            ),
+            const SizedBox(width: 16),
+            
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: GoogleFonts.josefinSans(fontWeight: FontWeight.bold, fontSize: 17, color: const Color(0xFF013aad))),
+                  const SizedBox(height: 4),
+                  Text(priceStr, style: GoogleFonts.josefinSans(color: const Color(0xFFb11d39), fontWeight: FontWeight.w600, fontSize: 15)),
+                ],
+              ),
+            ),
+            
+            // Counter or Sold Out
+            isSoldOut 
+            ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF8A80), // Light red/pink per request "Hết vé"
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  "Hết vé",
+                  style: GoogleFonts.josefinSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade200)
+                ),
+                child: Row(
+                  children: [
+                     IconButton(
+                       icon: Icon(Icons.remove, color: count > 0 ? const Color(0xFF013aad) : Colors.grey, size: 20),
+                       onPressed: count > 0 ? () => onChanged(count - 1) : null,
+                       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                       splashRadius: 20,
+                     ),
+                     SizedBox(
+                       width: 30, 
+                       child: Text("$count", textAlign: TextAlign.center, style: GoogleFonts.josefinSans(fontWeight: FontWeight.bold, fontSize: 16))
+                     ),
+                     IconButton(
+                       icon: const Icon(Icons.add, color: Color(0xFF013aad), size: 20),
+                       onPressed: count < available ? () => onChanged(count + 1) : null,
+                       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                       splashRadius: 20,
+                     ),
+                  ],
+                ),
+              )
+          ],
+        ),
+      );
   }
 }

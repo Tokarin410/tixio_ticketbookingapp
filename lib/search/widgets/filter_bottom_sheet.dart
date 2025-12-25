@@ -10,9 +10,10 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String _selectedCategory = "Nhạc sống";
-  String _selectedTime = "Hôm nay";
-  DateTime? _selectedDate;
+  String _selectedCategory = "";
+  String _selectedTime = "";
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   final List<String> categories = ["Nhạc sống", "Thể thao", "Khác"];
   final List<String> timeOptions = ["Tất cả các ngày", "Hôm nay", "Tháng này"];
@@ -148,11 +149,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
                   // Calendar
                   SearchCalendar(
-                    selectedDate: _selectedDate,
-                    onDateSelected: (date) {
+                    startDate: _startDate,
+                    endDate: _endDate,
+                    onRangeSelected: (start, end) {
                       setState(() {
-                        _selectedDate = date;
-                        _selectedTime = ""; // Clear preset if date selected manually
+                         _startDate = start;
+                         _endDate = end;
+                         _selectedTime = ""; // Clear preset
                       });
                     },
                   ),
@@ -173,7 +176,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         setState(() {
                           _selectedCategory = "";
                           _selectedTime = "";
-                          _selectedDate = null;
+                          _startDate = null;
+                          _endDate = null;
                         });
                       },
                       style: OutlinedButton.styleFrom(
@@ -194,7 +198,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                          // Return Map of filters
+                          Navigator.pop(context, {
+                            'category': _selectedCategory,
+                            'time': _selectedTime,
+                            'startDate': _startDate,
+                            'endDate': _endDate,
+                          });
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF013aad),
                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

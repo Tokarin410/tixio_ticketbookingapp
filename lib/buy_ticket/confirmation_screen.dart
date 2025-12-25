@@ -5,18 +5,28 @@ import 'package:tixio/buy_ticket/payment_processing_screen.dart';
 import 'package:tixio/buy_ticket/widgets/payment_method_popup.dart';
 import 'package:tixio/buy_ticket/widgets/ticket_stepper.dart';
 
+import 'package:tixio/models/event_model.dart';
+
 class ConfirmationScreen extends StatefulWidget {
   final int totalAmount;
   final int remainingTime;
   final String customerName;
+  final String customerEmail;
+  final String customerPhone;
   final String ticketSummary;
+  final Event event;
+  final int initialPaymentMethod; 
   
   const ConfirmationScreen({
     super.key, 
     required this.totalAmount,
     required this.remainingTime,
     required this.customerName,
+    required this.customerEmail,
+    required this.customerPhone,
     required this.ticketSummary,
+    required this.event,
+    required this.initialPaymentMethod,
   });
 
   @override
@@ -26,7 +36,7 @@ class ConfirmationScreen extends StatefulWidget {
 class _ConfirmationScreenState extends State<ConfirmationScreen> {
   Timer? _timer;
   late int _remainingSeconds;
-  int _selectedPaymentMethod = 2; // Default Momo (index 2)
+  late int _selectedPaymentMethod; 
   
   final List<Map<String, dynamic>> _methods = [
     {"label": "Thẻ tín dụng", "icon": Icons.credit_card, "color": Colors.blue},
@@ -38,6 +48,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   void initState() {
     super.initState();
     _remainingSeconds = widget.remainingTime; // Init with passed time
+    _selectedPaymentMethod = widget.initialPaymentMethod; // Init with passed method
     startTimer();
   }
 
@@ -179,7 +190,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                          ClipRRect(
                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                            child: Image.asset(
-                             "assets/images/ticket_banner_1.jpg", // Reusing asset or placeholder
+                             widget.event.posterImage, 
                              height: 180,
                              width: double.infinity,
                              fit: BoxFit.cover,
@@ -193,7 +204,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                              crossAxisAlignment: CrossAxisAlignment.start,
                              children: [
                                Text(
-                                 "ANH TRAI \"SAY HI\"\n2025 CONCERT",
+                                 widget.event.title.toUpperCase(),
                                  style: GoogleFonts.josefinSans(fontSize: 24, fontWeight: FontWeight.w900, height: 1.1),
                                ),
                                const SizedBox(height: 12),
@@ -201,7 +212,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                                  children: [
                                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
                                    const SizedBox(width: 6),
-                                   Expanded(child: Text("Khu đô thị Vạn Phúc, TP.HCM", style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.w600))),
+                                   Expanded(child: Text(widget.event.location, style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.w600))),
                                  ],
                                ),
                                const SizedBox(height: 6),
@@ -209,7 +220,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                                  children: [
                                    const Icon(Icons.calendar_month, size: 16, color: Colors.grey),
                                    const SizedBox(width: 6),
-                                   Text("12:00 - 23:00, 27 tháng 12, 2025", style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.w600)),
+                                   Text(widget.event.dateTime, style: GoogleFonts.josefinSans(fontSize: 16, fontWeight: FontWeight.w600)),
                                  ],
                                ),
                                
@@ -258,8 +269,8 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                                Text("Thông tin đặt vé", style: GoogleFonts.josefinSans(fontSize: 20, fontWeight: FontWeight.bold)),
                                const SizedBox(height: 10),
                                _buildInfoRow("Họ và tên", widget.customerName),
-                               _buildInfoRow("Email", "alphahahahha@gmail.com"),
-                               _buildInfoRow("SĐT", "0123456789"),
+                               _buildInfoRow("Email", widget.customerEmail),
+                               _buildInfoRow("SĐT", widget.customerPhone),
                                const SizedBox(height: 10),
                                Text("Phương thức thanh toán", style: GoogleFonts.josefinSans(fontSize: 16, color: Colors.grey)),
                                const SizedBox(height: 8),
@@ -387,6 +398,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                                   customerName: widget.customerName,
                                   ticketSummary: widget.ticketSummary,
                                   totalAmount: widget.totalAmount,
+                                  event: widget.event,
                                 ),
                               ),
                             );

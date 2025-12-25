@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class TicketDetailScreen extends StatelessWidget {
   final String title;
@@ -7,6 +8,8 @@ class TicketDetailScreen extends StatelessWidget {
   final String location;
   final String quantity;
   final String ticketClass;
+  final String ticketId; 
+  final String imagePath; // Added imagePath
 
   const TicketDetailScreen({
     super.key,
@@ -15,6 +18,8 @@ class TicketDetailScreen extends StatelessWidget {
     required this.location,
     required this.quantity,
     required this.ticketClass,
+    required this.ticketId, 
+    required this.imagePath, // Added imagePath
   });
 
   @override
@@ -27,7 +32,7 @@ class TicketDetailScreen extends StatelessWidget {
           style: GoogleFonts.josefinSans(
             fontWeight: FontWeight.bold,
             color: Colors.white,
-            fontSize: 24, // Increased
+            fontSize: 24, 
           ),
         ),
         centerTitle: true,
@@ -72,7 +77,7 @@ class TicketDetailScreen extends StatelessWidget {
                     topRight: Radius.circular(20),
                   ),
                   child: Image.asset(
-                    "assets/images/ticket_banner_1.jpg", 
+                    imagePath, // Use dynamic imagePath
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -169,14 +174,23 @@ class TicketDetailScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
                   child: Center(
-                    child: SizedBox(
-                      height: 180,
-                      width: 180,
-                      child: Image.asset(
-                        "assets/images/qr_placeholder.png", 
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.qr_code_2, size: 180, color: Colors.black),
-                      ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 180,
+                          width: 180,
+                          child: QrImageView(
+                            data: ticketId, // Unique Ticket ID
+                            version: QrVersions.auto,
+                            size: 180.0,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Mã vé: ${ticketId.substring(0, 8).toUpperCase()}",
+                          style: GoogleFonts.josefinSans(color: Colors.grey, fontSize: 12),
+                        )
+                      ],
                     )
                   ),
                 ),

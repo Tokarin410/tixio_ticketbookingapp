@@ -10,6 +10,9 @@ import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/search/search_screen.dart';
 import 'package:tixio/account/account_screen.dart';
 import 'package:tixio/vecuatoi/myticket.dart';
+import 'package:tixio/services/firestore_service.dart';
+import 'package:tixio/data/events_data.dart'; // Still keep for fallback or initial init, but ideally we fill it
+import 'package:tixio/models/event_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,8 +23,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
   static const Function(BuildContext) navigateFrom = NavigationBottom.navigateFrom;
+  
+  // Future to load events
+  late Future<List<Event>> _eventsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch events from Firestore
+    _eventsFuture = FirestoreService().getEvents();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +45,19 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         // Blue Header Background (only at the top)
         Container(
-          height: 300, 
-          color: const Color(0xFF013aad),
+          height: 380, 
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF013aad),
+                Color(0xFF4ea1f3),
+                Colors.white,
+              ],
+              stops: [0.3, 0.8, 1.0]
+            ),
+          ),
         ),
         // Main Content Layer
         Scaffold(
@@ -79,15 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: (_currentIndex == 2 || _currentIndex == 1)
-            ? _buildBody()
-            : Container(
-             margin: const EdgeInsets.only(top: 10), // Spacing from AppBar
-             decoration: const BoxDecoration(
-               color: Colors.white,
-             ),
-             child: _buildBody(),
-          ),
+          body: _buildBody(),
           bottomNavigationBar: NavigationBottom(
             currentIndex: _currentIndex,
             onTap: (index) {
@@ -104,26 +119,45 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(), // Ensure scrolling is always possible
-          padding: const EdgeInsets.fromLTRB(0, 20, 0, 100), // Add bottom padding to ensure last items are visible/scrollable above nav bar
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              TrendingEvents(),
-              SizedBox(height: 20),
-              SpecialEvents(),
-              SizedBox(height: 20),
-              ForYouSection(),
-              SizedBox(height: 20),
-              CategorySection(title: "Nhạc sống"),
-              SizedBox(height: 20),
-              CategorySection(title: "Thể thao"),
-              SizedBox(height: 20),
-              MonthFilter(),
-              SizedBox(height: 100), // Extra space at bottom
-            ],
-          ),
+        return StreamBuilder<List<Event>>(
+          stream: FirestoreService().getCombinedEventsStream(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            }
+
+            final events = snapshot.data ?? [];
+            if (events.isNotEmpty) {
+                 allEvents.clear();
+                 allEvents.addAll(events);
+            }
+
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(), // Ensure scrolling is always possible
+              padding: const EdgeInsets.fromLTRB(0, 20, 0, 100), // Add bottom padding to ensure last items are visible/scrollable above nav bar
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TrendingEvents(), // Now reads updated 'allEvents'
+                  SizedBox(height: 20),
+                  SpecialEvents(),
+                  SizedBox(height: 20),
+                  ForYouSection(),
+                  SizedBox(height: 20),
+                  CategorySection(title: "Nhạc sống"),
+                  SizedBox(height: 20),
+                  CategorySection(title: "Thể thao"),
+                  SizedBox(height: 20),
+                  MonthFilter(),
+                  SizedBox(height: 100), // Extra space at bottom
+                ],
+              ),
+            );
+          }
         );
       case 1:
         return const MyTicketScreen();

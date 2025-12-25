@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
 import 'package:tixio/search/search_screen.dart';
+import 'package:tixio/data/events_data.dart';
+import 'package:tixio/models/event_model.dart';
 
 class ForYouSection extends StatelessWidget {
   final bool showHeader;
@@ -8,29 +10,8 @@ class ForYouSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mock Data based on user image
-    final List<Map<String, String>> events = [
-      {
-        "title": "ANH TRAI \"SAY HI\" 2025 CONCERT",
-        "date": "27 Tháng 12, 2025",
-        "image": "assets/images/Poster ngang/ATSH.png"
-      },
-      {
-         "title": "Y-CONCERT - MÌNH ĐOÀN VIÊN THÔI",
-         "date": "25 Tháng 12, 2025",
-         "image": "assets/images/Poster ngang/Ycon.jpg"
-      },
-      {
-         "title": "CHỊ ĐẸP ĐẠP GIÓ CONCERT 2025",
-         "date": "30 Tháng 12, 2025",
-         "image": "assets/images/Poster ngang/CDDG.jpg"
-      },
-      {
-         "title": "ANH TRAI VƯỢT NGÀN CHÔNG GAI ENCORE",
-         "date": "31 Tháng 12, 2025",
-         "image": "assets/images/Poster ngang/ATVNCG.jpg"
-      },
-    ];
+    // Real Data - Limit to 4 items as requested
+    final List<Event> events = allEvents.take(4).toList(); 
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +44,12 @@ class ForYouSection extends StatelessWidget {
           ),
         ),
         
-        GridView.builder(
+        events.isEmpty 
+        ? const Padding(
+             padding: EdgeInsets.all(16.0),
+             child: Text("Đang cập nhật sự kiện..."),
+          )
+        : GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -78,7 +64,7 @@ class ForYouSection extends StatelessWidget {
             final event = events[index];
             return GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ThongTinSuKienScreen(event: event)));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +75,7 @@ class ForYouSection extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16), // Radius 16
                       image: DecorationImage(
-                        image: AssetImage(event["image"]!),
+                        image: AssetImage(event.posterImage),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -100,7 +86,7 @@ class ForYouSection extends StatelessWidget {
                 SizedBox(
                   height: 32,
                   child: Text(
-                    event["title"]!,
+                    event.title,
                     style: const TextStyle(
                       color: Color(0xFF013aad), // Blue title
                       fontWeight: FontWeight.bold,
@@ -117,7 +103,7 @@ class ForYouSection extends StatelessWidget {
                     const Icon(Icons.calendar_today, size: 12, color: Color(0xFFA51C30)), // Red icon
                     const SizedBox(width: 4),
                     Text(
-                      event["date"]!,
+                      event.dateOnly,
                       style: const TextStyle(
                         color: Color(0xFFA51C30), // Red date text
                         fontSize: 10,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/widgets/tixio_logo.dart';
+import 'package:tixio/taskbar_and_navbot/about_us_screen.dart';
 
 class Taskbar extends StatelessWidget {
   const Taskbar({super.key});
@@ -47,7 +48,8 @@ class Taskbar extends StatelessWidget {
               icon: Icons.people, 
               text: "About us", 
               onTap: () {
-                // Placeholder for About Us
+                Navigator.pop(context); // Close drawer
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUsScreen()));
               }
             ),
             _buildDivider(),

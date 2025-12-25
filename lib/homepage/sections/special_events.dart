@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
+import 'package:tixio/data/events_data.dart'; // import allEvents
+import 'package:tixio/models/event_model.dart'; // import Event model
 
 class SpecialEvents extends StatelessWidget {
   const SpecialEvents({super.key});
 
-  final List<String> _posterImages = const [
-    'assets/images/Poster dọc/db2d885f8d62de0f2d07a0b8d8137bc4.jpg',
-    'assets/images/Poster dọc/images (1).jpg',
-    'assets/images/Poster dọc/images (2).jpg',
-    'assets/images/Poster dọc/images (3).jpg',
-    'assets/images/Poster dọc/images.jpg',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // Pick some events for Special Events section
+    List<Event> specialEvents = allEvents.length > 5 ? allEvents.sublist(1, 6) : allEvents;
+
+    if (specialEvents.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -29,11 +30,12 @@ class SpecialEvents extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: _posterImages.length,
+            itemCount: specialEvents.length,
             itemBuilder: (context, index) {
+              final event = specialEvents[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ThongTinSuKienScreen(event: event)));
                 },
                 child: Container(
                   width: 160,
@@ -42,7 +44,7 @@ class SpecialEvents extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     color: Colors.grey[300],
                     image: DecorationImage(
-                      image: AssetImage(_posterImages[index]),
+                      image: AssetImage(event.bannerImage ?? event.posterImage),
                       fit: BoxFit.cover,
                     ),
                   ),

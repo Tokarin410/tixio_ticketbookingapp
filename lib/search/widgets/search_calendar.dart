@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SearchCalendar extends StatefulWidget {
-  final DateTime?  selectedDate;
-  final Function(DateTime) onDateSelected;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final Function(DateTime?, DateTime?) onRangeSelected;
 
   const SearchCalendar({
     super.key, 
-    this.selectedDate,
-    required this.onDateSelected,
+    this.startDate,
+    this.endDate,
+    required this.onRangeSelected,
   });
 
   @override
@@ -21,7 +23,7 @@ class _SearchCalendarState extends State<SearchCalendar> {
   @override
   void initState() {
     super.initState();
-    _focusedMonth = widget.selectedDate ?? DateTime.now();
+    _focusedMonth = widget.startDate ?? DateTime.now();
   }
 
   void _previousMonth() {
@@ -41,10 +43,23 @@ class _SearchCalendarState extends State<SearchCalendar> {
   }
 
   int _firstDayOffset(DateTime date) {
-    // 1 = Mon, 7 = Sun. content starts at Mon.
-    // DateTime.weekday: Mon=1, ... Sun=7.
-    // We want Monday to be index 0. So subtract 1.
     return DateTime(date.year, date.month, 1).weekday - 1;
+  }
+  
+  void _onDateTap(DateTime date) {
+     if (widget.startDate == null || (widget.startDate != null && widget.endDate != null)) {
+       // Start fresh selection
+       widget.onRangeSelected(date, null);
+     } else if (widget.startDate != null && widget.endDate == null) {
+       // Selecting end date?
+       if (date.isBefore(widget.startDate!)) {
+         // If selected date is before start date, treat as new start date
+         widget.onRangeSelected(date, null);
+       } else {
+         // Valid end date
+         widget.onRangeSelected(widget.startDate, date);
+       }
+     }
   }
 
   @override
@@ -63,12 +78,24 @@ class _SearchCalendarState extends State<SearchCalendar> {
               icon: const Icon(Icons.chevron_left, color: Colors.blue),
               onPressed: _previousMonth,
             ),
-            Text(
-              "Tháng ${_focusedMonth.month}, ${_focusedMonth.year}",
-              style: GoogleFonts.josefinSans(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            Column(
+              children: [
+                Text(
+                  "Tháng ${_focusedMonth.month}, ${_focusedMonth.year}",
+                  style: GoogleFonts.josefinSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Hôm nay: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}",
+                  style: GoogleFonts.josefinSans(
+                    fontSize: 12,
+                    color: const Color(0xFF013aad),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
             IconButton(
               icon: const Icon(Icons.chevron_right, color: Colors.blue),
@@ -94,7 +121,7 @@ class _SearchCalendarState extends State<SearchCalendar> {
           ),
         ),
 
-        // Settings for grid
+        // Grid
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -111,26 +138,46 @@ class _SearchCalendarState extends State<SearchCalendar> {
 
             final day = index - firstDayOffset + 1;
             final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
-            final isSelected = widget.selectedDate != null &&
-                widget.selectedDate!.year == date.year &&
-                widget.selectedDate!.month == date.month &&
-                widget.selectedDate!.day == date.day;
+            
+            bool isStart = widget.startDate != null && 
+                           widget.startDate!.year == date.year && 
+                           widget.startDate!.month == date.month && 
+                           widget.startDate!.day == date.day;
+            
+            bool isEnd = widget.endDate != null && 
+                           widget.endDate!.year == date.year && 
+                           widget.endDate!.month == date.month && 
+                           widget.endDate!.day == date.day;
+            
+            bool inRange = false;
+            if (widget.startDate != null && widget.endDate != null) {
+               inRange = date.isAfter(widget.startDate!) && date.isBefore(widget.endDate!);
+               // Fix edge case logic if needed, but isAfter/isBefore usually strict. 
+               // Actually for day precision better compare timestamps or add duration.
+               // Simple: 
+               if (!isStart && !isEnd) {
+                  inRange = date.isAfter(widget.startDate!) && date.isBefore(widget.endDate!);
+               }
+            }
 
             return GestureDetector(
-              onTap: () => widget.onDateSelected(date),
+              onTap: () => _onDateTap(date),
               child: Container(
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(8),
-                  border: isSelected ? Border.all(color: const Color(0xFF013aad), width: 1.5) : null,
-                  color: isSelected ? Colors.transparent : Colors.transparent,
+                  // Range styling
+                  color: (isStart || isEnd) 
+                          ? const Color(0xFF013aad) 
+                          : (inRange ? const Color(0xFF013aad).withOpacity(0.1) : Colors.transparent),
+                  // border: (isStart || isEnd) ? Border.all(color: const Color(0xFF013aad), width: 1.5) : null,
                 ),
                 child: Text(
                   "$day",
                   style: GoogleFonts.josefinSans(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? const Color(0xFF013aad) : Colors.black87,
+                    fontWeight: (isStart || isEnd) ? FontWeight.bold : FontWeight.normal,
+                    color: (isStart || isEnd) ? Colors.white : Colors.black87,
                   ),
                 ),
               ),

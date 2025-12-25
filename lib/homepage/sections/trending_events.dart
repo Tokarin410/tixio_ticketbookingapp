@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tixio/data/events_data.dart';
 
 class TrendingEvents extends StatefulWidget {
   const TrendingEvents({super.key});
@@ -13,16 +14,17 @@ class _TrendingEventsState extends State<TrendingEvents> {
   int _currentIndex = 0;
   final PageController _pageController = PageController(viewportFraction: 0.9);
   
-  final List<String> _posterImages = [
-    'assets/images/Poster ngang/ATSH.png',
-    'assets/images/Poster ngang/ATVNCG.jpg',
-    'assets/images/Poster ngang/CDDG.jpg',
-    'assets/images/Poster ngang/EMXINH.jpg',
-    'assets/images/Poster ngang/Ycon.jpg',
-  ];
+  // Use first 5 events for trending
+  // Ensure we have data
+  get trendingEvents => allEvents.take(5).toList();
 
   @override
   Widget build(BuildContext context) {
+    // Safety check just in case
+    if (allEvents.isEmpty) {
+      return const SizedBox.shrink(); 
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -52,10 +54,11 @@ class _TrendingEventsState extends State<TrendingEvents> {
               ],
             ),
           ),
+          
           SizedBox(
             height: 200, 
             child: PageView.builder(
-              itemCount: _posterImages.length,
+              itemCount: trendingEvents.length,
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
@@ -63,9 +66,10 @@ class _TrendingEventsState extends State<TrendingEvents> {
                 });
               },
               itemBuilder: (context, index) {
+                final event = trendingEvents[index];
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ThongTinSuKienScreen(event: event)));
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -73,7 +77,7 @@ class _TrendingEventsState extends State<TrendingEvents> {
                       borderRadius: BorderRadius.circular(12),
                       color: Colors.grey[300], 
                       image: DecorationImage(
-                        image: AssetImage(_posterImages[index]), 
+                        image: AssetImage(event.posterImage), 
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -114,7 +118,7 @@ class _TrendingEventsState extends State<TrendingEvents> {
            Center(
              child: Row(
                mainAxisAlignment: MainAxisAlignment.center,
-               children: List.generate(5, (index) => AnimatedContainer(
+               children: List.generate(trendingEvents.length, (index) => AnimatedContainer(
                  duration: const Duration(milliseconds: 300),
                  margin: const EdgeInsets.symmetric(horizontal: 3),
                  width: _currentIndex == index ? 10 : 8, // Active dot size

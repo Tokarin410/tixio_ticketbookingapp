@@ -8,6 +8,8 @@ import 'package:tixio/widgets/social_button.dart'; // Added
 import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/widgets/zigzag_background.dart';
 import 'package:tixio/services/authentication.dart';
+import 'package:tixio/services/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,20 +33,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   
   bool _showPassLengthError = false;
   bool _showConfirmPassLengthError = false;
-  bool _showEmailError = false; // Added
+  bool _showEmailError = false; 
+  bool _emailExistsError = false; // Added
   bool _isLoading = false;
 
   bool get _isValid => _isLengthValid && _isUppercaseValid && _isSpecialValid && _isMatchValid && !_showEmailError && _emailController.text.isNotEmpty; 
-  // Should we include email validity in the "Box" validity? 
-  // The box says "Mật khẩu hợp lệ/chưa hợp lệ". It focuses on Password. 
-  // However, the button checks `_isValid`. 
-  // Let's include email check in the button press check, but likely the box remains focused on password.
-  // I will update `_isValid` to basically mean "All Form Valid" or keep it password specific and check email separately on submit.
-  // For safety, let's keep _isValid as "Password Box State" and add a separate check for button, OR assume button is enabled only if form valid.
-  // The prompt says "Đúng thì khung xanh hiện lên", specifically referring to the Password Box. 
-  // So `_isValid` should remain focused on Password Validations for the Box UI.
-  // But I will add `_isEmailValid` for the general form logic if needed.
-  // Let's keep `_isValid` as is (Password Box) and handle email error independently.
 
   @override
   void initState() {
@@ -55,6 +48,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Email Listener
     _emailController.addListener(() {
        final text = _emailController.text;
+       // Reset Exists Error when typing
+       if (_emailExistsError) {
+         setState(() => _emailExistsError = false);
+       }
+
        if (text.isEmpty) {
          setState(() => _showEmailError = false);
          return;
@@ -162,6 +160,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                      style: GoogleFonts.poppins(color: Colors.redAccent, fontSize: 10)
                    ),
                  ),
+               if (_emailExistsError) // Added
+                 Padding(
+                   padding: const EdgeInsets.only(left: 10, top: 4),
+                   child: Text(
+                     "Email đã tồn tại tài khoản. Vui lòng nhập email khác", 
+                     style: GoogleFonts.poppins(color: const Color(0xFFFF8A80), fontSize: 12, fontWeight: FontWeight.bold), // Light red bold
+                   ),
+                 ),
 
                const SizedBox(height: 16),
                CustomTextField(
@@ -251,27 +257,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                  onPressed: () async {
                    if (_isValid && !_showEmailError && _emailController.text.isNotEmpty) {
                       setState(() => _isLoading = true);
-                      final auth = AuthService();
-                      final user = await auth.registerWithEmailAndPassword(
-                        _emailController.text.trim(), 
-                        _passController.text.trim()
-                      );
-                      
-                      if (!mounted) return;
+                      setState(() => _emailExistsError = false); // Reset error
 
-                      if (user != null) {
-                         // Must Sign Out immediately to prevent auto-login by Wrapper
-                         await auth.signOut();
+                      try {
+                        final auth = FirebaseAuth.instance;
+                        final userCredential = await auth.createUserWithEmailAndPassword(
+                          email: _emailController.text.trim(), 
+                          password: _passController.text.trim()
+                        );
+                        final user = userCredential.user;
+                        
+                        if (!mounted) return;
 
-                         Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const RegisterSuccessScreen()),
-                        );
-                      } else {
-                        setState(() => _isLoading = false);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Đăng ký thất bại. Email có thể đã tồn tại.")),
-                        );
+                        if (user != null) {
+                           // Create initial Firestore Profile
+                           await FirestoreService().updateUserProfile(user.uid, {
+                             'email': _emailController.text.trim(),
+                             'fullName': '', // Empty initially
+                             'phone': '',
+                           });
+
+                           // Must Sign Out immediately to prevent auto-login by Wrapper
+                           await auth.signOut();
+
+                           Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterSuccessScreen()),
+                          );
+                        }
+                      } on FirebaseAuthException catch (e) {
+                         setState(() => _isLoading = false);
+                         if (e.code == 'email-already-in-use') {
+                            setState(() => _emailExistsError = true);
+                         } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Đăng ký thất bại: ${e.message}")),
+                            );
+                         }
+                      } catch (e) {
+                         setState(() => _isLoading = false);
+                         ScaffoldMessenger.of(context).showSnackBar(
+                           SnackBar(content: Text("Lỗi: $e")),
+                         );
                       }
                    }
                  },

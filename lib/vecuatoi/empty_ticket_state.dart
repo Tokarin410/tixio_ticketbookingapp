@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/homepage/home_screen.dart';
 import 'package:tixio/buy_ticket/thongtinsukien.dart';
+import 'package:tixio/data/events_data.dart';
+import 'package:tixio/models/event_model.dart';
 
 class EmptyTicketState extends StatelessWidget {
   const EmptyTicketState({super.key});
@@ -73,26 +75,22 @@ class EmptyTicketState extends StatelessWidget {
               const SizedBox(height: 15), // Reduced from 20
               // Static Row Suggestion List
                Padding(
-                 padding: const EdgeInsets.symmetric(horizontal: 0), // Already inside padded parent? Parent has 16 padding.
+                 padding: const EdgeInsets.symmetric(horizontal: 0), 
                  child: Row(
                    children: [
                      Expanded(
-                       child: _buildSuggestionCard(
+                       child: allEvents.isNotEmpty ? _buildSuggestionCard(
                          context,
-                         title: 'ANH TRAI "SAY HI" 2025 CONCERT',
-                         date: '27 Tháng 12, 2025',
-                         imagePath: 'assets/images/Poster ngang/ATSH.png',
-                         margin: const EdgeInsets.only(right: 8), // Add margin to first item
-                       ),
+                         event: allEvents[0],
+                         margin: const EdgeInsets.only(right: 8), 
+                       ) : const SizedBox(),
                      ),
                      Expanded(
-                       child: _buildSuggestionCard(
+                       child: allEvents.length > 1 ? _buildSuggestionCard(
                          context,
-                         title: 'ANH TRAI "SAY HI" 2025 CONCERT',
-                         date: '27 Tháng 12, 2025',
-                         imagePath: 'assets/images/Poster ngang/ATSH.png',
-                         margin: const EdgeInsets.only(left: 8), // Add margin to second item
-                       ),
+                         event: allEvents[1],
+                         margin: const EdgeInsets.only(left: 8), 
+                       ) : const SizedBox(),
                      ),
                    ],
                  ),
@@ -103,10 +101,10 @@ class EmptyTicketState extends StatelessWidget {
      );
    }
  
-   Widget _buildSuggestionCard(BuildContext context, {required String title, required String date, required String imagePath, required EdgeInsets margin}) {
+   Widget _buildSuggestionCard(BuildContext context, {required Event event, required EdgeInsets margin}) {
      return GestureDetector(
        onTap: () {
-         Navigator.push(context, MaterialPageRoute(builder: (context) => const ThongTinSuKienScreen()));
+         Navigator.push(context, MaterialPageRoute(builder: (context) => ThongTinSuKienScreen(event: event)));
        },
        child: Container(
          // width removed, relying on Expanded parent
@@ -121,7 +119,7 @@ class EmptyTicketState extends StatelessWidget {
              ClipRRect(
                borderRadius: BorderRadius.circular(16),
                child: Image.asset(
-                 imagePath,
+                 event.posterImage,
                  height: 110, // Reduced from 120
                  width: double.infinity,
                  fit: BoxFit.cover,
@@ -132,7 +130,7 @@ class EmptyTicketState extends StatelessWidget {
              Padding(
                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                child: Text(
-                 title,
+                 event.title,
                  style: GoogleFonts.josefinSans(
                    fontWeight: FontWeight.bold,
                    fontSize: 12, // Reduced from 13
@@ -150,7 +148,7 @@ class EmptyTicketState extends StatelessWidget {
                    const Icon(Icons.calendar_today, size: 11, color: Color(0xFFA51C30)), // Reduced size
                    const SizedBox(width: 4),
                    Text(
-                     date,
+                     event.dateOnly,
                      style: GoogleFonts.josefinSans(
                        fontWeight: FontWeight.bold,
                        fontSize: 9, // Reduced from 10

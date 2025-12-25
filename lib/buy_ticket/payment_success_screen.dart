@@ -7,6 +7,7 @@ class PaymentSuccessScreen extends StatelessWidget {
   final String ticketClass; // e.g. "Hạng C x1", "Hạng A x2"
   final int totalAmount;
   final String transactionTime;
+  final String eventName;
 
   const PaymentSuccessScreen({
     super.key,
@@ -14,6 +15,7 @@ class PaymentSuccessScreen extends StatelessWidget {
     required this.ticketClass,
     required this.totalAmount,
     required this.transactionTime,
+    required this.eventName,
   });
 
   String formatCurrency(int amount) {
@@ -68,19 +70,23 @@ class PaymentSuccessScreen extends StatelessWidget {
               const SizedBox(height: 15),
               
               // Transaction Details
-              _buildDetailRow("Tên sự kiện", "ANH TRAI \"SAY HI\" 2025 CONCERT", isBoldValue: true),
+              _buildDetailRow("Tên sự kiện", eventName, isBoldValue: true),
               _buildDetailRow("Người đặt", customerName, isBoldValue: true),
               _buildDetailRow("Ngày giao dịch", transactionTime, isBoldValue: true),
               _buildDetailRow("Hạng vé", ticketClass, isBoldValue: true),
               _buildDetailRow("Tổng cộng", formatCurrency(totalAmount), isBoldValue: true),
-              _buildDetailRow("Mã vé", "FINALPROJECT", isBoldValue: true),
+              _buildDetailRow("Tổng cộng", formatCurrency(totalAmount), isBoldValue: true),
               
-              const SizedBox(height: 20),
-              // QR Code Placeholder
+              // QR Code Placeholder - Just an icon for success visual
               const Icon(
-                Icons.qr_code_2,
-                size: 150,
-                color: Colors.black,
+                Icons.check_circle_outline, // Changed to check circle for success feel
+                size: 100,
+                color: Colors.green,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Mã vé đã được gửi vào 'Vé của tôi'",
+                style: GoogleFonts.josefinSans(color: Colors.grey),
               ),
               
               const SizedBox(height: 20),

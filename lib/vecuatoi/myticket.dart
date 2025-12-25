@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/vecuatoi/ticket_detail_screen.dart';
 import 'package:tixio/vecuatoi/empty_ticket_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tixio/services/firestore_service.dart';
+import 'package:tixio/models/ticket_model.dart';
 
 class MyTicketScreen extends StatefulWidget {
   const MyTicketScreen({super.key});
@@ -115,54 +118,62 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
   }
 
   Widget _buildUpcomingTickets() {
-    if (!hasTickets) {
-      return const EmptyTicketState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return const Center(child: Text("Vui lòng đăng nhập để xem vé"));
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildTicketCard(
-          title: 'ANH TRAI "SAY HI" 2025 CONCERT',
-          date: '12:00 - 23:00, 27 tháng 12, 2025',
-          location: 'Khu đô thị Vạn Phúc, TP.HCM',
-          quantity: '01',
-          ticketClass: 'SVIP A',
-          status: 'Thành công',
-          statusColor: Colors.green,
-          imagePath: 'assets/images/ticket_banner_1.jpg',
-        ),
-        _buildTicketCard(
-          title: 'Y-CONCERT 2025',
-          date: '10:00 - 23:00, 25 tháng 12, 2025',
-          location: 'VINHOMES OCEAN PARK 3',
-          quantity: '01',
-          ticketClass: 'S-VIP A',
-          status: 'Thành công',
-          statusColor: Colors.green,
-          imagePath: 'assets/images/ticket_banner_2.jpg',
-        ),
-      ],
+
+    return StreamBuilder<List<Ticket>>(
+      stream: FirestoreService().getUserTickets(user.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+           return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (snapshot.hasError) {
+           return Center(child: Text("Lỗi: ${snapshot.error}"));
+        }
+
+        final tickets = snapshot.data ?? [];
+        // Filter for upcoming (Logic: anything we just bought is upcoming)
+        // Or strictly parse date. For simplicity/demo: All tickets = upcoming
+        // You can add better filtering logic later.
+        
+        if (tickets.isEmpty) {
+           return const EmptyTicketState();
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: tickets.length,
+          itemBuilder: (context, index) {
+             final ticket = tickets[index];
+             return _buildTicketCard(
+               title: ticket.eventTitle,
+               date: ticket.eventDate,
+               location: ticket.eventLocation,
+               quantity: ticket.ticketClass.split(',').length.toString().padLeft(2, '0'), // Estimate qty
+               ticketClass: ticket.ticketClass,
+               status: ticket.status,
+               statusColor: Colors.green,
+               imagePath: ticket.posterImage,
+               ticketId: ticket.id, // Pass ID
+             );
+          },
+        );
+      },
     );
   }
 
 
   Widget _buildPastTickets() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-         _buildTicketCard(
-          title: 'ANH TRAI "SAY HI" 2025 CONCERT',
-          date: '12:00 - 23:00, 27 tháng 12, 2025',
-          location: 'Khu đô thị Vạn Phúc, TP.HCM',
-          quantity: '01',
-          ticketClass: 'SVIP A',
-          status: 'Đã diễn ra',
-          statusColor: Colors.grey[700]!, // Darker text for visibility on grey bg
-          imagePath: 'assets/images/ticket_banner_1.jpg', // Placeholder
-          backgroundColor: const Color(0xFFD9D9D9), // Light grey background
-        ),
-      ],
-    );
+     // For now, return empty or mock. Focus is on buying -> appearing in upcoming
+     return ListView(
+       padding: const EdgeInsets.all(16),
+       children: [
+          // Keeping placeholder for demo
+       ],
+     );
   }
 
   // ... _buildTicketCard implementation ...
@@ -196,6 +207,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
     required String status,
     required Color statusColor,
     required String imagePath,
+    required String ticketId, // Added ticketId
     Color backgroundColor = Colors.white,
   }) {
     return GestureDetector(
@@ -209,6 +221,8 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
               location: location,
               quantity: quantity,
               ticketClass: ticketClass,
+              ticketId: ticketId, // pass ID
+              imagePath: imagePath, // Pass imagePath
             ),
           ),
         );
