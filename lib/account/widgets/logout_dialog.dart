@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/login_and_register/auth/login_option_screen.dart';
+import 'package:tixio/services/authentication.dart';
 
 class LogoutDialog extends StatelessWidget {
   const LogoutDialog({super.key});
@@ -55,12 +56,15 @@ class LogoutDialog extends StatelessWidget {
                  const SizedBox(width: 16),
                  Expanded(
                    child: ElevatedButton(
-                     onPressed: () {
-                       Navigator.pushAndRemoveUntil(
-                         context,
-                         MaterialPageRoute(builder: (context) => const LoginOptionScreen()),
-                         (route) => false,
-                       );
+                     onPressed: () async {
+                       await AuthService().signOut(); // Actual logout
+                       if (context.mounted) {
+                           Navigator.pushAndRemoveUntil(
+                             context,
+                             MaterialPageRoute(builder: (context) => const LoginOptionScreen()),
+                             (route) => false,
+                           );
+                       }
                      },
                      style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF013aad),

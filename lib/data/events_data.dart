@@ -68,6 +68,7 @@ List<Event> allEvents = [
     category: "nhacsong",
     seatMapImage: "assets/images/Map/mapatsh.png",
     bannerImage: "assets/images/Poster dọc/ATSH.jpg",
+    collectionName: "nhacsong",
   ),
 
   // 2. Y-CONCERT
@@ -84,6 +85,7 @@ List<Event> allEvents = [
     ticketTiers: [TicketTier(name: "Standard", price: 800000, totalQuantity: 800, benefits: ["Vị trí tự do"])],
     seatMapImage: "assets/images/Map/mapyconcert.png",
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 3. CHỊ ĐẸP ĐẠP GIÓ
@@ -100,6 +102,7 @@ List<Event> allEvents = [
     ticketTiers: tiersATSH, // Reusing similar tiers roughly
     seatMapImage: "assets/images/Map/mapchidep.png",
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 4. ANH TRAI VƯỢT NGÀN CHÔNG GAI
@@ -116,6 +119,7 @@ List<Event> allEvents = [
     ticketTiers: [TicketTier(name: "Fanzone VIP", price: 500000, totalQuantity: 500, benefits: ["Khu vực gần sân khấu", "Lightstick"])],
     seatMapImage: "assets/images/Map/mapatvncg.jpg",
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 5. GENFEST
@@ -131,6 +135,7 @@ List<Event> allEvents = [
     organizer: vieChannel, // Placeholder
     ticketTiers: [TicketTier(name: "Early Bird", price: 999000, totalQuantity: 1000, benefits: ["Vào cửa sớm"])],
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 6. SOL 8
@@ -146,6 +151,7 @@ List<Event> allEvents = [
     organizer: vieChannel, // Placeholder
     ticketTiers: tiersSport, // Reusing low cost
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 7. Nhạc Sống Hoàng Hải - Uyên Linh (Specific ID for Category Section)
@@ -161,6 +167,7 @@ List<Event> allEvents = [
     organizer: yenSuaConcert,
     ticketTiers: tiersSport,
     category: "Nhạc sống",
+    collectionName: "nhacsong",
   ),
 
   // 8. Thể thao DTQV (Specific ID for Category Section)
@@ -177,6 +184,7 @@ List<Event> allEvents = [
     ticketTiers: tiersSport,
     seatMapImage: "assets/images/Map/mapsport1.png",
     category: "sports",
+    collectionName: "sports",
   ),
 
   // 9. Thể thao VBC (Specific ID for Category Section)
@@ -193,5 +201,6 @@ List<Event> allEvents = [
     ticketTiers: tiersSport,
     seatMapImage: "assets/images/Map/mapsport2.png",
     category: "Thể thao",
+    collectionName: "sports",
   ),
 ];

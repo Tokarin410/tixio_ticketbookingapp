@@ -10,6 +10,7 @@ import 'package:tixio/widgets/tixio_logo.dart';
 import 'package:tixio/widgets/custom_button.dart';
 import 'package:tixio/widgets/custom_text_field.dart';
 import 'package:tixio/services/authentication.dart';
+import 'package:tixio/services/firestore_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -194,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   } else {
                     setState(() => _isLoading = false);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.")),
+                      const SnackBar(content: Text("Thông tin đăng nhập không hợp lệ")),
                     );
                   }
                 },
@@ -215,7 +216,24 @@ class _LoginScreenState extends State<LoginScreen> {
               SocialButton(
                 text: 'Đăng nhập với Google',
                 icon: FontAwesomeIcons.googlePlusG,
-                onPressed: () {},
+                onPressed: () async {
+                  setState(() => _isLoading = true);
+                  final user = await AuthService().signInWithGoogle();
+                  
+                  if (!mounted) return;
+                  if (user != null) {
+                    // Success
+                    await FirestoreService().updateUserProfile(user.uid, {
+                             'email': user.email ?? "",
+                             'fullName': user.displayName ?? "",
+                             'phone': "",
+                    });
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  } else {
+                     setState(() => _isLoading = false);
+                     // Optional: Show error if not cancelled
+                  }
+                },
               ),
               const SizedBox(height: 30),
               Row(

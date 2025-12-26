@@ -123,15 +123,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF1E3A8A)),
-             style: IconButton.styleFrom(
-                   backgroundColor: const Color(0xFFE3F2FD), 
-                   shape: const CircleBorder(),
-             ),
+        leading: Center(
+          child: Container(
+            margin: const EdgeInsets.only(left: 10),
+            decoration: const BoxDecoration(
+              color: Color(0xFFE3F2FD),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Padding(
+                padding: EdgeInsets.only(left: 6.0), // Visually center the iOS arrow
+                child: Icon(Icons.arrow_back_ios, color: Color(0xFF1E3A8A), size: 18),
+              ),
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            ),
           ),
         ),
       ),
@@ -317,9 +324,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                ),
               const SizedBox(height: 30),
               SocialButton(
-                text: 'Đăng nhập với Google',
+                text: 'Đăng kí với Google',
                 icon: FontAwesomeIcons.googlePlusG,
-                onPressed: () {},
+                onPressed: () async {
+                  setState(() => _isLoading = true);
+                  final user = await AuthService().signInWithGoogle();
+                  
+                  if (!mounted) return;
+                  if (user != null) {
+                    // Success
+                    await FirestoreService().updateUserProfile(user.uid, {
+                             'email': user.email ?? "",
+                             'fullName': user.displayName ?? "",
+                             'phone': "",
+                    });
+                    // For Register Flow via Google, directly go to Success or Home. 
+                    // Usually Google Sign In is instant login. 
+                    // Let's go to RegisterSuccessScreen to be consistent with design flow transparency
+                    // OR just login. 
+                    // The user said "Login with google", usually implies skipping steps.
+                    // But Wrapper will catch it.
+                    // Let's just pop to Home which wrapper handles.
+                     Navigator.of(context).popUntil((route) => route.isFirst);
+                  } else {
+                     setState(() => _isLoading = false);
+                  }
+                },
               ),
               const SizedBox(height: 30),
               Row(

@@ -13,4 +13,23 @@ A few resources to get you started if this is your first Flutter project:
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## Troubleshooting Common Issues (Các lỗi thường gặp)
+
+### 1. Lỗi Google Sign-In (Login failed/Exception)
+Nếu gặp lỗi biên dịch liên quan đến `GoogleSignIn` hoặc `accessToken`:
+- **Nguyên nhân:** Phiên bản `google_sign_in` mới (v7.0+) có thay đổi lớn gây lỗi với code cũ.
+- **Cách sửa:**
+  1. Mở file `pubspec.yaml`, đảm bảo dòng này là: `google_sign_in: ^6.2.1`
+  2. Chạy lệnh: `flutter clean` sau đó `flutter pub get`.
+
+### 2. Lỗi Gradle / Java Home (Exception: 25.0.1)
+Nếu gặp lỗi build "What went wrong: 25.0.1":
+- **Nguyên nhân:** Máy đang cài Java 25 (quá mới), Gradle chưa hỗ trợ.
+- **Cách sửa:**
+  1. Sửa biến môi trường `JAVA_HOME` trỏ về JDK 17 hoặc thấp hơn.
+  2. Hoặc cấu hình Android Studio dùng JDK nhúng (Embedded JDK).
+
+### 3. App bị đơ ở logo (White screen)
+- **Nguyên nhân:** Xung đột giữa màn hình chờ (Splash) và kiểm tra đăng nhập.
+- **Cách sửa:** Đã xử lý trong `Wrapper.dart` bằng cách thêm vòng xoay Loading.

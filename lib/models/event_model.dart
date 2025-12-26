@@ -12,6 +12,7 @@ class Event {
   final List<TicketTier> ticketTiers;
   final String category;
   final String? seatMapImage;
+  final String? collectionName;
 
   Event({
     required this.id,
@@ -27,6 +28,7 @@ class Event {
     required this.ticketTiers,
     required this.category,
     this.seatMapImage,
+    this.collectionName,
   });
 
   Map<String, dynamic> toMap() {
@@ -44,6 +46,7 @@ class Event {
       'ticketTiers': ticketTiers.map((x) => x.toMap()).toList(),
       'category': category,
       'seatMapImage': seatMapImage,
+      'collectionName': collectionName,
     };
   }
 
@@ -73,6 +76,7 @@ class Event {
         : [],
       category: map['category'] ?? '',
       seatMapImage: map['seatMapImage'],
+      collectionName: map['collectionName'],
     );
   }
 
@@ -211,7 +215,7 @@ class TicketTier {
           : double.tryParse(map['price'].toString().replaceAll(',', '').replaceAll('.', '')) ?? 0,
       totalQuantity: (map['totalQuantity'] is int)
           ? map['totalQuantity']
-          : (map['capacity'] is int ? map['capacity'] : int.tryParse(map['capacity'].toString()) ?? 0), // Fallback to 'capacity' if exists for migration
+          : (map['capacity'] is int ? map['capacity'] : int.tryParse(map['capacity'].toString()) ?? 1000), // Fallback to 1000 if missing
       soldQuantity: (map['soldQuantity'] is int) ? map['soldQuantity'] : 0,
       benefits: List<String>.from(map['benefits'] ?? []),
     );

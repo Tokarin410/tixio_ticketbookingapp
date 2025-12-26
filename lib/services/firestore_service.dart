@@ -15,7 +15,9 @@ class FirestoreService {
     try {
       QuerySnapshot snapshot = await _eventsRef.get();
       return snapshot.docs.map((doc) {
-        return Event.fromMap(doc.data() as Map<String, dynamic>);
+        var data = doc.data() as Map<String, dynamic>;
+        data['collectionName'] = 'events'; // Explicitly set source
+        return Event.fromMap(data);
       }).toList();
     } catch (e) {
       print("Error fetching events: $e");
@@ -30,8 +32,23 @@ class FirestoreService {
       getEventsFromCollection('nhacsong'), 
       getEventsFromCollection('sports'), 
       (List<Event> a, List<Event> b, List<Event> c) {
-        // Merge and Deduplicate if necessary (assuming unique IDs, but just list join for now)
-        return [...a, ...b, ...c];
+        // Merge and Deduplicate
+        Map<String, Event> uniqueEvents = {};
+        
+        // Add generic events first (lower priority)
+        for (var e in a) {
+          uniqueEvents[e.id] = e;
+        }
+        
+        // Overwrite with specific collections (higher priority)
+        for (var e in b) {
+          uniqueEvents[e.id] = e;
+        }
+        for (var e in c) {
+          uniqueEvents[e.id] = e;
+        }
+        
+        return uniqueEvents.values.toList();
       }
     );
   }
@@ -50,7 +67,9 @@ class FirestoreService {
     return _db.collection(collectionPath).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         try {
-          return Event.fromMap(doc.data() as Map<String, dynamic>);
+          var data = doc.data() as Map<String, dynamic>;
+          data['collectionName'] = collectionPath; // Inject source collection
+          return Event.fromMap(data);
         } catch (e) {
           print("Error parsing event ${doc.id} in $collectionPath: $e");
           return null;
@@ -60,19 +79,27 @@ class FirestoreService {
   }
 
   // Get stream for a single event
-  Stream<Event> getEventStream(String id, String category) {
+  Stream<Event> getEventStream(String id, String category, {String? collectionName}) {
     String collection = 'events';
-    String catLower = category.toLowerCase();
     
-    if (catLower.contains('nhạc sống') || catLower.contains('nhacsong')) {
-      collection = 'nhacsong';
-    } else if (catLower.contains('thể thao') || catLower.contains('sports') || catLower.contains('sport')) {
-      collection = 'sports';
+    // Priority: Explicit collectionName -> Category Inference
+    if (collectionName != null && collectionName.isNotEmpty) {
+       collection = collectionName;
+    } else {
+      String catLower = category.toLowerCase();
+      
+      if (catLower.contains('nhạc sống') || catLower.contains('nhacsong')) {
+        collection = 'nhacsong';
+      } else if (catLower.contains('thể thao') || catLower.contains('sports') || catLower.contains('sport')) {
+        collection = 'sports';
+      }
     }
     
     return _db.collection(collection).doc(id).snapshots().map((doc) {
       if (doc.exists) {
-        return Event.fromMap(doc.data() as Map<String, dynamic>);
+        var data = doc.data() as Map<String, dynamic>;
+        data['collectionName'] = collection; // Ensure consistency
+        return Event.fromMap(data);
       } else {
         throw Exception("Event not found");
       }
@@ -85,14 +112,36 @@ class FirestoreService {
     try {
       // Check if data already exists to avoid duplicates/overwrite safety
       for (var event in allEvents) {
-        final docRef = _eventsRef.doc(event.id);
+        String collection = 'events';
+        String catLower = event.category.toLowerCase();
+        
+        if (catLower.contains('nhạc sống') || catLower.contains('nhacsong')) {
+          collection = 'nhacsong';
+        } else if (catLower.contains('thể thao') || catLower.contains('sports') || catLower.contains('sport')) {
+          collection = 'sports';
+        }
+
+        final docRef = _db.collection(collection).doc(event.id);
         final docSnapshot = await docRef.get();
         
         if (!docSnapshot.exists) {
-          await docRef.set(event.toMap());
-          print("Seeded event: ${event.title}");
+          // Add collectionName tracking to the seeding document
+          var eventData = event.toMap();
+          eventData['collectionName'] = collection; // Ensure consistency in DB
+          await docRef.set(eventData);
+          print("Seeded event: ${event.title} into $collection");
         } else {
-           print("Skipped existing event: ${event.title}");
+           print("Skipped existing event: ${event.title} in $collection");
+        }
+        
+        // CLEANUP: Delete from legacy 'events' collection if it belongs elsewhere
+        if (collection != 'events') {
+           final legacyDocRef = _db.collection('events').doc(event.id);
+           final legacySnap = await legacyDocRef.get();
+           if (legacySnap.exists) {
+              await legacyDocRef.delete();
+              print("Deleted legacy duplicate: ${event.title} from 'events'");
+           }
         }
       }
       print("Seeding complete!");

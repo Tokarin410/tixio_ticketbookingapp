@@ -13,6 +13,13 @@ class Wrapper extends StatelessWidget {
       stream: AuthService().user,
       builder: (context, snapshot) {
         
+        if (snapshot.connectionState == ConnectionState.waiting) {
+           return const Scaffold(
+             backgroundColor: Colors.white,
+             body: Center(child: CircularProgressIndicator()),
+           );
+        }
+
         // If snapshot has data, user is logged in
         if (snapshot.hasData) {
            return const HomeScreen();

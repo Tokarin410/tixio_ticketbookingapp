@@ -22,7 +22,7 @@ class _ChooseTicketScreenState extends State<ChooseTicketScreen> {
   @override
   void initState() {
     super.initState();
-    _eventStream = FirestoreService().getEventStream(widget.event.id, widget.event.category);
+    _eventStream = FirestoreService().getEventStream(widget.event.id, widget.event.category, collectionName: widget.event.collectionName);
     // Initialize counts to 0
     for (int i = 0; i < widget.event.ticketTiers.length; i++) {
         ticketCounts[i] = 0;
@@ -67,7 +67,7 @@ class _ChooseTicketScreenState extends State<ChooseTicketScreen> {
         initialData: widget.event,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-             return Center(child: Text("Lỗi: ${snapshot.error}"));
+             return Center(child: Text("Lỗi: ${snapshot.error}\nAllocated Collection: ${widget.event.collectionName}\nID: ${widget.event.id}", textAlign: TextAlign.center));
           }
           
           // Use the latest event data

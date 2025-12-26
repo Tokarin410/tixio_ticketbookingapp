@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/models/event_model.dart';
 import 'package:tixio/services/firestore_service.dart';
 import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -12,6 +13,18 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    // Extra security check
+    if (FirebaseAuth.instance.currentUser?.email != "namkhanhphan05@gmail.com") {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Bạn không có quyền truy cập!")));
+      });
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
   
   // Controllers
@@ -112,6 +125,29 @@ class _AdminDashboardState extends State<AdminDashboard> {
         backgroundColor: const Color(0xFF013aad),
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.bug_report, color: Colors.orangeAccent),
+            tooltip: "Sửa lỗi dữ liệu (Reset DB)",
+            onPressed: () async {
+               bool confirm = await showDialog(
+                 context: context, 
+                 builder: (_) => AlertDialog(
+                   title: const Text("Reset & Sửa lỗi dữ liệu?"),
+                   content: const Text("Hành động này sẽ kiểm tra và phân phối lại các sự kiện về đúng collection (Events/Nhạc/Thể thao) để khắc phục lỗi 'Event Not Found'. Dữ liệu cũ sẽ được cập nhật."),
+                   actions: [
+                     TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Hủy")),
+                     TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Đồng ý")),
+                   ],
+                 )
+               ) ?? false;
+
+               if (confirm) {
+                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đang sửa lỗi dữ liệu...")));
+                 await FirestoreService().seedEvents();
+                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đã sửa lỗi xong! Vui lòng khởi động lại app.")));
+               }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.cloud_sync),
             tooltip: "Cập nhật dữ liệu cũ",

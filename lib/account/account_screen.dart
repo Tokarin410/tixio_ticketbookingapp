@@ -165,14 +165,15 @@ class _AccountScreenState extends State<AccountScreen> {
                // No trailing, defaults to arrow
              ),
              
-             // Admin Panel (Temporary)
-             _buildMenuItem(
-               "Quản trị viên (Thêm sự kiện)",
-               onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard()));
-               },
-               trailing: const Icon(Icons.admin_panel_settings, color: Colors.red),
-             ),
+             // Admin Panel (Protected)
+             if (FirebaseAuth.instance.currentUser?.email == "namkhanhphan05@gmail.com")
+               _buildMenuItem(
+                 "Quản trị viên (Thêm sự kiện)",
+                 onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminDashboard()));
+                 },
+                 trailing: const Icon(Icons.admin_panel_settings, color: Colors.blueAccent),
+               ),
              
              const SizedBox(height: 20),
              
