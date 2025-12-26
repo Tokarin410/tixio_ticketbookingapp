@@ -328,26 +328,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 icon: FontAwesomeIcons.googlePlusG,
                 onPressed: () async {
                   setState(() => _isLoading = true);
-                  final user = await AuthService().signInWithGoogle();
-                  
-                  if (!mounted) return;
-                  if (user != null) {
-                    // Success
-                    await FirestoreService().updateUserProfile(user.uid, {
-                             'email': user.email ?? "",
-                             'fullName': user.displayName ?? "",
-                             'phone': "",
-                    });
-                    // For Register Flow via Google, directly go to Success or Home. 
-                    // Usually Google Sign In is instant login. 
-                    // Let's go to RegisterSuccessScreen to be consistent with design flow transparency
-                    // OR just login. 
-                    // The user said "Login with google", usually implies skipping steps.
-                    // But Wrapper will catch it.
-                    // Let's just pop to Home which wrapper handles.
-                     Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else {
+                  try {
+                    final user = await AuthService().signInWithGoogle();
+                    
+                    if (!mounted) return;
+                    if (user != null) {
+                      // Success
+                      await FirestoreService().updateUserProfile(user.uid, {
+                              'email': user.email ?? "",
+                              'fullName': user.displayName ?? "",
+                              'phone': "",
+                      });
+                      
+                      // Sign out immediately to prevent auto-login
+                      await AuthService().signOut();
+
+                      if (!mounted) return;
+                      
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterSuccessScreen()),
+                      );
+                    } else {
+                      setState(() => _isLoading = false);
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Đã hủy chọn tài khoản")),
+                      );
+                    }
+                  } catch (e) {
                      setState(() => _isLoading = false);
+                     if (!mounted) return;
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       SnackBar(content: Text("Lỗi Đăng Ký Google: $e")),
+                     );
                   }
                 },
               ),

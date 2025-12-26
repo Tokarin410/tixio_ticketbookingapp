@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tixio/account/screens/reset_password_screen.dart'; // Changed path
@@ -182,20 +183,38 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () async {
                   setState(() => _isLoading = true);
                   final auth = AuthService();
-                  final user = await auth.signInWithEmailAndPassword(
-                    _emailController.text.trim(), 
-                    _passwordController.text.trim()
-                  );
-                  
-                  if (!mounted) return;
+                  try {
+                    final user = await auth.signInWithEmailAndPassword(
+                      _emailController.text.trim(), 
+                      _passwordController.text.trim()
+                    );
+                    
+                    if (!mounted) return;
 
-                  if (user != null) {
-                    // Success: Pop everything to go back to Wrapper (which shows Home)
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else {
+                    if (user != null) {
+                      // Success: Pop everything to go back to Wrapper (which shows Home)
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    }
+                  } on FirebaseAuthException catch (e) {
                     setState(() => _isLoading = false);
+                    String message = "Đăng nhập thất bại";
+                    if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
+                       message = "Tài khoản không tồn tại hoặc sai thông tin";
+                    } else if (e.code == 'wrong-password') {
+                       message = "Sai mật khẩu vui lòng kiểm tra lại";
+                    } else if (e.code == 'invalid-email') {
+                       message = "Email không hợp lệ";
+                    }
+                    
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Thông tin đăng nhập không hợp lệ")),
+                      SnackBar(content: Text(message)),
+                    );
+                  } catch (e) {
+                    setState(() => _isLoading = false);
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Lỗi: ${e.toString()}")),
                     );
                   }
                 },
@@ -218,20 +237,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 icon: FontAwesomeIcons.googlePlusG,
                 onPressed: () async {
                   setState(() => _isLoading = true);
-                  final user = await AuthService().signInWithGoogle();
-                  
-                  if (!mounted) return;
-                  if (user != null) {
-                    // Success
-                    await FirestoreService().updateUserProfile(user.uid, {
-                             'email': user.email ?? "",
-                             'fullName': user.displayName ?? "",
-                             'phone': "",
-                    });
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  } else {
+                  try {
+                    final user = await AuthService().signInWithGoogle();
+                    
+                    if (!mounted) return;
+                    if (user != null) {
+                      // Success
+                      await FirestoreService().updateUserProfile(user.uid, {
+                              'email': user.email ?? "",
+                              'fullName': user.displayName ?? "",
+                              'phone': "",
+                      });
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    } else {
+                       setState(() => _isLoading = false);
+                       if (!mounted) return;
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         const SnackBar(content: Text("Đăng nhập Google: Đã hủy chọn tài khoản")),
+                       );
+                    }
+                  } catch (e) {
                      setState(() => _isLoading = false);
-                     // Optional: Show error if not cancelled
+                     if (!mounted) return;
+                     ScaffoldMessenger.of(context).showSnackBar(
+                       SnackBar(content: Text("Lỗi Google Log: $e")),
+                     );
                   }
                 },
               ),

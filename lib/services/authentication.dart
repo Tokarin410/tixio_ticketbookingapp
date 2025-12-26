@@ -17,13 +17,8 @@ class AuthService {
 
   // Sign in with Email & Password
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return result.user;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
+    UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    return result.user;
   }
 
   // Register with Email & Password
@@ -48,23 +43,19 @@ class AuthService {
   } // Added closing brace for signOut
 
   // Google Sign In
+  // Google Sign In
   Future<User?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) return null; // User canceled
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null; // User canceled
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-      UserCredential result = await _auth.signInWithCredential(credential);
-      return result.user;
-    } catch (e) {
-      print("Google Sign In Error: $e");
-      return null;
-    }
+    UserCredential result = await _auth.signInWithCredential(credential);
+    return result.user;
   }
 }

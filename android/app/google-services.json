@@ -12,7 +12,20 @@
           "package_name": "com.example.ticketcon"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "149609022354-vuq1hpthp1d0ojgrq80rgdg7p56th7b1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ticketcon",
+            "certificate_hash": "32e49d642a362548ad80321cf0b1bd235e432b75"
+          }
+        },
+        {
+          "client_id": "149609022354-u0ebs32chdun6hakjoooohekbdn3hdj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD7ES9CXhIEN7nSvIb_l5qJ7o4Ohq527UQ"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "149609022354-u0ebs32chdun6hakjoooohekbdn3hdj9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
