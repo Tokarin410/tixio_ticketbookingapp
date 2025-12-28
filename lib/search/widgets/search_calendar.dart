@@ -170,7 +170,7 @@ class _SearchCalendarState extends State<SearchCalendar> {
                   // Range styling
                   color: (isStart || isEnd) 
                           ? const Color(0xFF013aad) 
-                          : (inRange ? const Color(0xFF013aad).withOpacity(0.1) : Colors.transparent),
+                          : (inRange ? const Color(0xFF013aad).withValues(alpha: 0.1) : Colors.transparent),
                   // border: (isStart || isEnd) ? Border.all(color: const Color(0xFF013aad), width: 1.5) : null,
                 ),
                 child: Text(

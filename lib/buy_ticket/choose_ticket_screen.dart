@@ -73,6 +73,33 @@ class _ChooseTicketScreenState extends State<ChooseTicketScreen> {
           // Use the latest event data
           final event = snapshot.data ?? widget.event;
           final total = getTotalAmount(event);
+          
+          // Safe Date Parsing Logic
+          String day = "??";
+          String month = "??";
+          try {
+             if (event.dateOnly.contains('/')) {
+                 final parts = event.dateOnly.split('/');
+                 if (parts.length >= 2) {
+                     day = parts[0];
+                     month = parts[1];
+                 }
+             } else if (event.dateOnly.toLowerCase().contains('tháng')) {
+                 // Handle "30 tháng 12, 2025" format
+                 final parts = event.dateOnly.trim().split(' ');
+                 if (parts.length >= 3) {
+                     day = parts[0];
+                     month = parts[2].replaceAll(',', '');
+                 }
+             } else {
+                 // Fallback simple split by space if seemingly valid
+                 final parts = event.dateOnly.trim().split(' ');
+                 if (parts.length >= 1) day = parts[0];
+             }
+          } catch (_) {
+             // Keep default "??", avoid crash
+          }
+
 
           return Column(
             children: [
@@ -113,8 +140,8 @@ class _ChooseTicketScreenState extends State<ChooseTicketScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("Tháng ${event.dateOnly.split('/')[1]}", style: GoogleFonts.josefinSans(fontSize: 12, color: const Color(0xFF013aad), fontWeight: FontWeight.bold)),
-                                  Text(event.dateOnly.split('/')[0], style: GoogleFonts.josefinSans(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF013aad))),
+                                  Text("Tháng $month", style: GoogleFonts.josefinSans(fontSize: 12, color: const Color(0xFF013aad), fontWeight: FontWeight.bold)),
+                                  Text(day, style: GoogleFonts.josefinSans(fontSize: 22, fontWeight: FontWeight.bold, color: const Color(0xFF013aad))),
                                 ],
                               ),
                             ),

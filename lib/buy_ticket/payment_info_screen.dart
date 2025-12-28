@@ -145,10 +145,19 @@ class _PaymentInfoScreenState extends State<PaymentInfoScreen> {
 
   List<String> get dateParts {
     try {
-      // Expecting "dd/MM/yyyy" e.g. "27/12/2025"
-      final parts = widget.event.dateOnly.split('/');
-      if (parts.length >= 2) {
-        return [parts[0], parts[1]]; // [Day, Month]
+      if (widget.event.dateOnly.contains('/')) {
+         final parts = widget.event.dateOnly.split('/');
+         if (parts.length >= 2) return [parts[0], parts[1]];
+      } else if (widget.event.dateOnly.toLowerCase().contains('tháng')) {
+         // "30 tháng 12, 2025"
+         final parts = widget.event.dateOnly.trim().split(' ');
+         if (parts.length >= 3) {
+            return [parts[0], parts[2].replaceAll(',', '')];
+         }
+      } else {
+         // Fallback
+         final parts = widget.event.dateOnly.trim().split(' ');
+         if (parts.length >= 1) return [parts[0], "??"];
       }
     } catch (e) {
       // ignore

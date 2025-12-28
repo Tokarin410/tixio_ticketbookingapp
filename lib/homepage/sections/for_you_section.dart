@@ -121,15 +121,13 @@ class ForYouSection extends StatelessWidget {
         const SizedBox(height: 20),
         // Ad Banner
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          height: 150, // Increased height for better visibility
+          height: 150, 
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-             image: const DecorationImage(
+             image: DecorationImage(
                 image: AssetImage('assets/images/bannerquangcao.png'), 
-                fit: BoxFit.fill, // Ensure it fills the container completely
+                fit: BoxFit.fill, 
              ),
           ),
         ),

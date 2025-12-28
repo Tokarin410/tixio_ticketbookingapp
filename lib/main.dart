@@ -2,14 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tixio/login_and_register/onboarding/onboarding_screen.dart';
+
 import 'package:tixio/homepage/home_screen.dart';
 import 'package:tixio/taskbar_and_navbot/safety_instructions_screen.dart';
 import 'package:tixio/taskbar_and_navbot/regulations_screen.dart';
 import 'package:tixio/taskbar_and_navbot/report_incident_screen.dart';
 import 'package:tixio/taskbar_and_navbot/notifications_screen.dart';
 import 'package:tixio/wrapper.dart';
-import 'package:tixio/services/firestore_service.dart';
+
 
 Future<void> main() async {
 

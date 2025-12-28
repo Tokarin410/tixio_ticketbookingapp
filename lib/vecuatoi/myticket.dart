@@ -234,7 +234,7 @@ class _MyTicketScreenState extends State<MyTicketScreen> with SingleTickerProvid
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -362,7 +362,7 @@ class DashedLineVerticalPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double dashHeight = 5, dashSpace = 5, startY = 3; // Adjusted for better spacing
     final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.5)
+      ..color = Colors.grey.withValues(alpha: 0.5)
       ..strokeWidth = 1.5;
 
     while (startY < size.height) {

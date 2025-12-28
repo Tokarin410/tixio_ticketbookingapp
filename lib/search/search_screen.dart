@@ -96,7 +96,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
           // Filter logic
           List<Event> displayEvents = allEventsList.where((event) {
-            bool matchesQuery = _searchQuery.isEmpty || event.title.toLowerCase().contains(_searchQuery.toLowerCase());
+            // Improved Search Logic: Token-based and Multi-field
+            bool matchesQuery = true;
+            if (_searchQuery.isNotEmpty) {
+               List<String> queryWords = _searchQuery.toLowerCase().trim().split(RegExp(r'\s+'));
+               // Create a searchable string containing relevant fields
+               String searchTarget = "${event.title} ${event.location} ${event.dateOnly} ${event.organizer.name}".toLowerCase();
+               
+               // Check if ALL keywords are present in the search target
+               for (String word in queryWords) {
+                 if (!searchTarget.contains(word)) {
+                   matchesQuery = false;
+                   break;
+                 }
+               }
+            }
             
             // Category Filter
             bool matchesCategory = true;
